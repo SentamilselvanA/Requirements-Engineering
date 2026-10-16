@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Requirements Engineering in Embedded Systems</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#1a2332;line-height:1.7}
+a{color:#1565c0;text-decoration:none}
+a:hover{text-decoration:underline}
+header{background:linear-gradient(135deg,#0d2137 0%,#1565c0 60%,#00897b 100%);color:#fff;padding:36px 24px 28px;text-align:center}
+header h1{font-size:2rem;letter-spacing:1px;margin-bottom:6px}
+header h2{font-size:1.1rem;font-weight:400;opacity:.88;margin-bottom:4px}
+header p{font-size:.97rem;opacity:.78}
+nav{background:#0d2137;position:sticky;top:0;z-index:100;overflow-x:auto;white-space:nowrap}
+nav a{display:inline-block;color:#cfd8dc;padding:12px 14px;font-size:.85rem;transition:background .2s}
+nav a:hover,nav a.active{background:#1565c0;color:#fff;text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+section{background:#fff;border-radius:10px;margin-bottom:28px;padding:28px 24px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+h2.sec-title{font-size:1.45rem;color:#0d2137;border-left:5px solid #1565c0;padding-left:12px;margin-bottom:18px}
+h3{color:#1565c0;margin:18px 0 8px;font-size:1.1rem}
+h4{color:#00695c;margin:14px 0 6px;font-size:1rem}
+p{margin-bottom:10px}
+ul,ol{margin:8px 0 12px 22px}
+li{margin-bottom:4px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.93rem}
+th{background:#1565c0;color:#fff;padding:9px 10px;text-align:left}
+td{padding:8px 10px;border-bottom:1px solid #e0e0e0}
+tr:nth-child(even) td{background:#f5f7fa}
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.78rem;font-weight:600;margin:2px}
+.badge-fr{background:#e3f2fd;color:#1565c0}
+.badge-nfr{background:#e8f5e9;color:#2e7d32}
+.badge-hw{background:#fff3e0;color:#e65100}
+.badge-saf{background:#fce4ec;color:#c62828}
+.badge-must{background:#1565c0;color:#fff}
+.badge-should{background:#00897b;color:#fff}
+.badge-could{background:#f9a825;color:#fff}
+.badge-wont{background:#757575;color:#fff}
+.callout{border-left:4px solid #1565c0;background:#e3f2fd;padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+.callout.warn{border-color:#f57c00;background:#fff3e0}
+.callout.success{border-color:#2e7d32;background:#e8f5e9}
+.callout.danger{border-color:#c62828;background:#fce4ec}
+.collapsible{cursor:pointer;background:#e8edf2;border:none;width:100%;text-align:left;padding:11px 16px;font-size:1rem;font-weight:600;color:#0d2137;border-radius:6px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.collapsible:hover{background:#cfd8dc}
+.collapsible .arrow{transition:transform .3s}
+.collapsible.open .arrow{transform:rotate(90deg)}
+.coll-content{display:none;padding:14px 16px;border:1px solid #e0e0e0;border-radius:0 0 6px 6px;margin-bottom:8px;background:#fafbfc}
+.coll-content.show{display:block}
+.quiz-wrap{margin:10px 0}
+.quiz-q{background:#f5f7fa;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e0e0e0}
+.quiz-q p{font-weight:600;margin-bottom:10px}
+.quiz-q label{display:block;padding:6px 10px;border-radius:5px;cursor:pointer;margin-bottom:4px;transition:background .15s}
+.quiz-q label:hover{background:#e3f2fd}
+.quiz-q label.correct{background:#c8e6c9;color:#1b5e20}
+.quiz-q label.wrong{background:#ffcdd2;color:#b71c1c}
+.quiz-q label.missed{background:#fff9c4;color:#f57f17}
+.quiz-feedback{margin-top:8px;font-size:.92rem;padding:8px 12px;border-radius:5px;display:none}
+.quiz-feedback.show{display:block}
+.score-box{background:#0d2137;color:#fff;border-radius:8px;padding:18px;text-align:center;margin:16px 0;font-size:1.2rem;display:none}
+.score-box.show{display:block}
+.btn{display:inline-block;padding:10px 22px;border-radius:6px;border:none;cursor:pointer;font-size:.97rem;font-weight:600;transition:background .2s,transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:#1565c0;color:#fff}
+.btn-primary:hover{background:#0d47a1}
+.btn-secondary{background:#00897b;color:#fff}
+.btn-secondary:hover{background:#00695c}
+.btn-warn{background:#f57c00;color:#fff}
+.btn-warn:hover{background:#e65100}
+.btn-sm{padding:6px 14px;font-size:.85rem}
+.flex-row{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0}
+.card{flex:1;min-width:200px;background:#f5f7fa;border-radius:8px;padding:14px;border:1px solid #e0e0e0}
+.card h4{margin-top:0}
+.rtm-filter{margin-bottom:10px}
+.rtm-filter select{padding:6px 10px;border-radius:5px;border:1px solid #ccc;font-size:.93rem}
+.highlight{background:#fff9c4;padding:1px 4px;border-radius:3px}
+.diagram-box{background:#f0f4f8;border:1px solid #cfd8dc;border-radius:8px;padding:16px;margin:14px 0;overflow-x:auto}
+svg text{font-family:'Segoe UI',Arial,sans-serif}
+#back-top{position:fixed;bottom:28px;right:24px;background:#1565c0;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.4rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);display:none;z-index:200}
+#back-top.show{display:block}
+.diff-easy{color:#2e7d32;font-weight:600}
+.diff-mod{color:#f57c00;font-weight:600}
+.diff-hard{color:#c62828;font-weight:600}
+.interview-q{border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.interview-q .iq-head{background:#e8edf2;padding:12px 16px;cursor:pointer;font-weight:600;display:flex;justify-content:space-between}
+.interview-q .iq-body{display:none;padding:14px 16px;background:#fafbfc}
+.interview-q .iq-body.show{display:block}
+.req-id{font-family:monospace;background:#e3f2fd;color:#1565c0;padding:1px 6px;border-radius:4px;font-size:.9rem}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:14px 0}
+.toc-item{background:#e8edf2;border-radius:7px;padding:10px 14px;font-size:.92rem;border-left:4px solid #1565c0}
+.toc-item a{color:#0d2137;font-weight:600}
+.process-step{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;padding:14px;background:#f5f7fa;border-radius:8px;border-left:4px solid #1565c0}
+.step-num{background:#1565c0;color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:1.1rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}.flex-row{flex-direction:column}}
+@media print{nav,#back-top,.btn{display:none!important}body{background:#fff}section{box-shadow:none;border:1px solid #ccc}}
+.glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin:12px 0}
+.glossary-item{background:#f5f7fa;border-radius:7px;padding:10px 14px;border-left:3px solid #00897b}
+.glossary-item strong{color:#0d2137}
+.state-label{font-size:13px;font-weight:600}
+.checklist li{list-style:none;padding-left:4px}
+.checklist li::before{content:"☐ ";color:#1565c0}
+.checklist li.done::before{content:"☑ ";color:#2e7d32}
+</style>
+</head>
+<body>
+<header>
+  <h1>Requirements Engineering in Embedded Systems</h1>
+  <h2>Unit: Requirements Engineering in Embedded Design &nbsp;|&nbsp; B.E./B.Tech – CSE / ECE / EEE</h2>
+  <p>Embedded Systems Engineering &nbsp;·&nbsp; Academic &amp; Industry Reference &nbsp;·&nbsp; Interactive Learning Website</p>
+</header>
+<nav id="main-nav">
+  <a href="#intro">Introduction</a>
+  <a href="#process">RE Process</a>
+  <a href="#casestudy">Case Study</a>
+  <a href="#srs">SRS</a>
+  <a href="#fnfr">F &amp; NF Req.</a>
+  <a href="#elicitation">Elicitation</a>
+  <a href="#diagrams">Diagrams</a>
+  <a href="#quality">Quality &amp; Priority</a>
+  <a href="#rtm">RTM</a>
+  <a href="#vv">V &amp; V</a>
+  <a href="#change">Change Mgmt</a>
+  <a href="#examples">Solved Examples</a>
+  <a href="#gate">GATE Prep</a>
+  <a href="#interview">Interview Prep</a>
+  <a href="#industry">Industry</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#revision">Revision</a>
+</nav>
+<div class="container">
+
+<!-- SECTION 1: INTRODUCTION -->
+<section id="intro">
+<h2 class="sec-title">1. Introduction &amp; Learning Objectives</h2>
+<div class="callout">
+  <strong>What is Requirements Engineering?</strong> Requirements Engineering (RE) is the systematic process of discovering, documenting, analyzing, validating, and managing the needs and constraints that a system must satisfy. It bridges the gap between stakeholder expectations and the technical design of a system.
+</div>
+<h3>Why RE Matters in Embedded Systems</h3>
+<p>Embedded systems operate in physical environments with strict constraints on timing, power, memory, safety, and hardware interfaces. A missing or ambiguous requirement can cause a product recall, safety hazard, or costly redesign. Studies show that fixing a defect found during requirements costs 10–100× less than fixing it after deployment.</p>
+<div class="flex-row">
+  <div class="card"><h4>🎯 Objectives</h4><ul><li>Define and document stakeholder needs</li><li>Translate needs into verifiable specifications</li><li>Manage changes systematically</li><li>Provide a baseline for design and testing</li></ul></div>
+  <div class="card"><h4>✅ Benefits</h4><ul><li>Reduces rework and cost overruns</li><li>Improves communication across teams</li><li>Enables traceability from need to test</li><li>Supports safety and certification</li></ul></div>
+  <div class="card"><h4>⚠️ Without RE</h4><ul><li>Ambiguous specifications</li><li>Missed safety constraints</li><li>Hardware/software mismatches</li><li>Untestable deliverables</li></ul></div>
+</div>
+<h3>Types of Requirements</h3>
+<table>
+  <tr><th>Type</th><th>Definition</th><th>Embedded Example</th></tr>
+  <tr><td><strong>Stakeholder Requirements</strong></td><td>High-level needs expressed by users, customers, or operators</td><td>"The system must alert the operator when temperature exceeds safe limits."</td></tr>
+  <tr><td><strong>System Requirements</strong></td><td>What the complete system (HW+SW) must do</td><td>"The system shall activate the cooling fan within 500 ms of detecting T &gt; 75 °C."</td></tr>
+  <tr><td><strong>Software/Firmware Requirements</strong></td><td>Behavior of the software/firmware component</td><td>"The firmware shall poll the temperature sensor every 200 ms."</td></tr>
+  <tr><td><strong>Hardware Requirements</strong></td><td>Physical and electrical constraints on hardware</td><td>"The MCU shall operate at 3.3 V ± 5% supply voltage."</td></tr>
+</table>
+<h3>Functional vs. Non-Functional Requirements</h3>
+<div class="two-col">
+  <div class="callout success"><strong>Functional Requirements (FR)</strong> – <em>What</em> the system does.<br>Example: "The system shall display the current temperature on the LCD."</div>
+  <div class="callout warn"><strong>Non-Functional Requirements (NFR)</strong> – <em>How well</em> the system does it.<br>Example: "The system shall respond to a temperature change within 500 ms."</div>
+</div>
+<h3>Requirement Categories in Embedded Systems</h3>
+<table>
+  <tr><th>Category</th><th>Description</th><th>Example</th></tr>
+  <tr><td>Hardware</td><td>Physical components, electrical specs</td><td>Sensor accuracy ±0.5 °C</td></tr>
+  <tr><td>Software/Firmware</td><td>Code behavior, algorithms</td><td>PID control loop execution every 100 ms</td></tr>
+  <tr><td>Interface</td><td>Communication between components</td><td>I²C at 400 kHz between MCU and sensor</td></tr>
+  <tr><td>Timing</td><td>Deadlines, latencies, sampling rates</td><td>Fan activation within 500 ms</td></tr>
+  <tr><td>Performance</td><td>Throughput, accuracy, efficiency</td><td>Temperature resolution 0.1 °C</td></tr>
+  <tr><td>Safety</td><td>Fail-safe behavior, fault handling</td><td>Activate alarm if sensor disconnected</td></tr>
+  <tr><td>Security</td><td>Access control, data integrity</td><td>Firmware update requires authenticated command</td></tr>
+  <tr><td>Power</td><td>Consumption, battery life</td><td>System idle current &lt; 10 mA</td></tr>
+</table>
+<h3>Stakeholders in Embedded RE</h3>
+<ul>
+  <li><strong>End Users / Operators</strong> – Use the system daily</li>
+  <li><strong>System Architects</strong> – Define overall system structure</li>
+  <li><strong>Hardware Engineers</strong> – Design PCB, select components</li>
+  <li><strong>Firmware/Software Engineers</strong> – Implement control logic</li>
+  <li><strong>QA/Test Engineers</strong> – Verify and validate requirements</li>
+  <li><strong>Safety/Regulatory Engineers</strong> – Ensure compliance with applicable standards</li>
+  <li><strong>Project Managers</strong> – Manage scope, schedule, cost</li>
+  <li><strong>Customers/Clients</strong> – Define business needs</li>
+</ul>
+<h3>RE and the Embedded Development Life Cycle</h3>
+<p>Requirements Engineering feeds directly into system architecture, hardware design, firmware development, integration testing, and product maintenance. Changes at any stage may require revisiting requirements. RE is therefore an ongoing activity, not a one-time phase.</p>
+<h3>Learning Objectives</h3>
+<ol>
+  <li>Define requirements engineering and explain its role in embedded system development.</li>
+  <li>Distinguish functional, non-functional, hardware, software, interface, timing, safety, and power requirements.</li>
+  <li>Apply elicitation techniques to gather stakeholder needs.</li>
+  <li>Write clear, unambiguous, testable requirements using standard identifiers.</li>
+  <li>Construct an SRS document for an embedded system.</li>
+  <li>Build and interpret a Requirement Traceability Matrix (RTM).</li>
+  <li>Distinguish verification from validation and derive test cases from requirements.</li>
+  <li>Manage requirement changes and perform impact analysis.</li>
+  <li>Apply MoSCoW prioritization to embedded requirements.</li>
+  <li>Prepare for GATE examinations and embedded systems engineering interviews.</li>
+</ol>
+<h3>Key Terminology Glossary</h3>
+<div class="glossary-grid">
+  <div class="glossary-item"><strong>Requirement</strong> – A documented need or constraint that a system must satisfy.</div>
+  <div class="glossary-item"><strong>SRS</strong> – Software Requirements Specification; formal document describing system requirements.</div>
+  <div class="glossary-item"><strong>RTM</strong> – Requirement Traceability Matrix; maps requirements to design, code, and tests.</div>
+  <div class="glossary-item"><strong>Elicitation</strong> – Process of gathering requirements from stakeholders.</div>
+  <div class="glossary-item"><strong>Validation</strong> – Confirming the system meets stakeholder needs ("built the right thing").</div>
+  <div class="glossary-item"><strong>Verification</strong> – Confirming the system meets its specification ("built it right").</div>
+  <div class="glossary-item"><strong>Baseline</strong> – An approved, frozen version of requirements used as a reference.</div>
+  <div class="glossary-item"><strong>Traceability</strong> – Ability to link a requirement to its source, design, and test.</div>
+  <div class="glossary-item"><strong>MoSCoW</strong> – Prioritization method: Must/Should/Could/Won't have.</div>
+  <div class="glossary-item"><strong>Real-Time Constraint</strong> – A timing deadline that the system must meet to function correctly.</div>
+  <div class="glossary-item"><strong>Stakeholder</strong> – Any person or group with an interest in the system.</div>
+  <div class="glossary-item"><strong>Feasibility</strong> – Whether a requirement can be implemented within project constraints.</div>
+</div>
+</section>
+
+<!-- SECTION 2: RE PROCESS -->
+<section id="process">
+<h2 class="sec-title">2. Requirements Engineering Process</h2>
+<div class="callout">The RE process is <strong>iterative</strong>, not strictly sequential. Teams often revisit earlier stages as new information emerges, stakeholders change, or technology constraints are discovered.</div>
+
+<div class="diagram-box">
+<svg width="100%" viewBox="0 0 820 120" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1565c0"/></marker></defs>
+  <g>
+    <rect x="5" y="35" width="85" height="50" rx="7" fill="#1565c0"/><text x="47" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Elicitation</text><text x="47" y="72" text-anchor="middle" fill="#fff" font-size="9">Gather needs</text>
+    <line x1="90" y1="60" x2="105" y2="60" stroke="#1565c0" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="105" y="35" width="85" height="50" rx="7" fill="#0d47a1"/><text x="147" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Analysis</text><text x="147" y="72" text-anchor="middle" fill="#fff" font-size="9">Refine &amp; model</text>
+    <line x1="190" y1="60" x2="205" y2="60" stroke="#1565c0" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="205" y="35" width="85" height="50" rx="7" fill="#1565c0"/><text x="247" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Specification</text><text x="247" y="72" text-anchor="middle" fill="#fff" font-size="9">Write SRS</text>
+    <line x1="290" y1="60" x2="305" y2="60" stroke="#1565c0" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="305" y="35" width="85" height="50" rx="7" fill="#0d47a1"/><text x="347" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Validation</text><text x="347" y="72" text-anchor="middle" fill="#fff" font-size="9">Stakeholder OK?</text>
+    <line x1="390" y1="60" x2="405" y2="60" stroke="#1565c0" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="405" y="35" width="85" height="50" rx="7" fill="#00897b"/><text x="447" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Verification</text><text x="447" y="72" text-anchor="middle" fill="#fff" font-size="9">Review &amp; inspect</text>
+    <line x1="490" y1="60" x2="505" y2="60" stroke="#1565c0" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="505" y="35" width="85" height="50" rx="7" fill="#1565c0"/><text x="547" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Prioritization</text><text x="547" y="72" text-anchor="middle" fill="#fff" font-size="9">MoSCoW / rank</text>
+    <line x1="590" y1="60" x2="605" y2="60" stroke="#1565c0" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="605" y="35" width="85" height="50" rx="7" fill="#0d47a1"/><text x="647" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Management</text><text x="647" y="72" text-anchor="middle" fill="#fff" font-size="9">Track &amp; control</text>
+    <line x1="690" y1="60" x2="705" y2="60" stroke="#1565c0" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="705" y="35" width="110" height="50" rx="7" fill="#00695c"/><text x="760" y="57" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Traceability &amp;</text><text x="760" y="72" text-anchor="middle" fill="#fff" font-size="9">Change Mgmt</text>
+  </g>
+  <text x="410" y="115" text-anchor="middle" fill="#555" font-size="10">↺ Iterative – any stage may feed back to an earlier stage</text>
+</svg>
+</div>
+
+<div id="proc-steps">
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 1: Requirements Elicitation</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> The process of discovering, collecting, and understanding stakeholder needs, goals, and constraints.</p>
+  <p><strong>Activities:</strong> Interviews, workshops, observation, document review, prototyping, use-case analysis.</p>
+  <p><strong>Tools:</strong> Interview guides, questionnaires, use-case templates, affinity diagrams.</p>
+  <p><strong>Output:</strong> Stakeholder needs list, raw requirement statements, use-case descriptions.</p>
+  <p><strong>Challenges:</strong> Stakeholders may not know what they want; conflicting needs; tacit knowledge; communication barriers.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> Interviewing a factory floor operator reveals that the cooling system must continue operating during a brief power interruption (UPS requirement not initially stated).</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 2: Requirements Analysis</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> Examining raw requirements to resolve conflicts, remove ambiguity, check feasibility, and model system behavior.</p>
+  <p><strong>Activities:</strong> Conflict resolution, feasibility assessment, modeling (state machines, DFDs), classification (FR/NFR/HW).</p>
+  <p><strong>Tools:</strong> UML tools, state-machine editors, spreadsheets, FMEA worksheets.</p>
+  <p><strong>Output:</strong> Analyzed, classified, and prioritized requirement list; system models.</p>
+  <p><strong>Challenges:</strong> Incomplete information; hardware/software boundary decisions; conflicting stakeholder priorities.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> Analysis reveals that a 100 ms fan response time requires a sensor sampling interval of ≤ 50 ms, which affects MCU selection.</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 3: Requirements Specification</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> Formally documenting requirements in a structured, unambiguous, and verifiable form.</p>
+  <p><strong>Activities:</strong> Writing SRS, assigning unique IDs, defining acceptance criteria, linking to stakeholder needs.</p>
+  <p><strong>Tools:</strong> SRS templates (IEEE 830 / ISO/IEC/IEEE 29148 as guidance), DOORS, Jira, Confluence.</p>
+  <p><strong>Output:</strong> Software Requirements Specification (SRS) document.</p>
+  <p><strong>Challenges:</strong> Maintaining consistency; avoiding vague language ("fast", "reliable"); keeping the document up to date.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> FR-003: "The firmware shall activate the cooling fan within 500 ms (±50 ms) of the temperature sensor reading exceeding 75 °C, under normal operating conditions (5–40 °C ambient, nominal supply voltage)."</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 4: Requirements Validation</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> Confirming that the documented requirements correctly represent stakeholder needs ("Are we building the right system?").</p>
+  <p><strong>Activities:</strong> Stakeholder reviews, walkthroughs, prototyping, scenario testing.</p>
+  <p><strong>Tools:</strong> Review checklists, prototype demos, acceptance test plans.</p>
+  <p><strong>Output:</strong> Validated SRS with stakeholder sign-off; list of issues to resolve.</p>
+  <p><strong>Challenges:</strong> Stakeholders may not read technical documents; late discovery of missing requirements.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> A prototype demo reveals that the operator expects an audible alarm, not just an LED indicator — a requirement that was missed during elicitation.</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 5: Requirements Verification &amp; Review</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> Checking that requirements are correct, complete, consistent, and testable ("Are we building it right?").</p>
+  <p><strong>Activities:</strong> Formal inspections, peer reviews, automated consistency checks, test-case derivation.</p>
+  <p><strong>Tools:</strong> Review checklists, static analysis tools, traceability tools.</p>
+  <p><strong>Output:</strong> Reviewed SRS; defect list; updated requirements.</p>
+  <p><strong>Challenges:</strong> Time pressure; reviewer expertise; large document size.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> A review finds that FR-005 references a sensor accuracy of ±0.5 °C but HW-002 specifies a sensor with ±1 °C accuracy — an inconsistency requiring resolution.</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 6: Requirements Prioritization</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> Ranking requirements by importance, risk, and implementation effort to guide development planning.</p>
+  <p><strong>Activities:</strong> MoSCoW analysis, risk assessment, stakeholder voting, cost-benefit analysis.</p>
+  <p><strong>Tools:</strong> Priority matrices, MoSCoW tables, weighted scoring.</p>
+  <p><strong>Output:</strong> Prioritized requirement list; release plan.</p>
+  <p><strong>Challenges:</strong> All stakeholders want their requirements as "Must Have"; political pressure.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> Safety alarm (SAF-001) is Must Have; Bluetooth logging (COM-002) is Could Have for the first product release.</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 7: Requirements Management</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> Ongoing process of tracking, controlling, and communicating requirement status throughout the project lifecycle.</p>
+  <p><strong>Activities:</strong> Version control, change request processing, status tracking, stakeholder communication.</p>
+  <p><strong>Tools:</strong> DOORS, Jira, Confluence, Git-based requirement tracking.</p>
+  <p><strong>Output:</strong> Requirement status reports; change log; updated SRS versions.</p>
+  <p><strong>Challenges:</strong> Scope creep; uncontrolled changes; keeping all teams synchronized.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> A change request to reduce fan response time from 500 ms to 200 ms is logged, analyzed for impact on firmware and hardware, approved, and communicated to all teams.</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 8: Requirements Traceability</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> The ability to link each requirement to its origin (stakeholder need), design component, implementation, and test case.</p>
+  <p><strong>Activities:</strong> Building RTM, linking requirements to design artifacts, test cases, and code modules.</p>
+  <p><strong>Tools:</strong> RTM spreadsheets, DOORS, Polarion, Jira with traceability plugins.</p>
+  <p><strong>Output:</strong> Requirement Traceability Matrix (RTM).</p>
+  <p><strong>Challenges:</strong> Keeping RTM up to date; large systems with hundreds of requirements.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> FR-003 (fan activation) is traced to: Stakeholder Need SN-02 → Design Component: FanController module → Test Case TC-003.</div>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>Stage 9: Change Management &amp; Impact Analysis</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p><strong>Definition:</strong> Systematic process for evaluating, approving, and implementing changes to baselined requirements.</p>
+  <p><strong>Activities:</strong> Change request submission, impact analysis, approval board review, implementation, re-testing.</p>
+  <p><strong>Tools:</strong> Change control boards (CCB), issue trackers, configuration management tools.</p>
+  <p><strong>Output:</strong> Approved change requests; updated SRS; updated test cases; change log.</p>
+  <p><strong>Challenges:</strong> Cascading impacts across hardware, firmware, and tests; schedule and cost implications.</p>
+  <div class="callout success"><strong>Embedded Example:</strong> Reducing fan response time from 500 ms to 200 ms requires: faster sensor sampling (firmware change), higher MCU clock (hardware change), updated test cases, and revised power budget.</div>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 3: CASE STUDY -->
+<section id="casestudy">
+<h2 class="sec-title">3. Case Study: Smart Temperature Monitoring &amp; Automatic Cooling System</h2>
+<div class="callout"><strong>Note:</strong> Threshold values (e.g., 75 °C, 85 °C) and timing values (e.g., 500 ms) used throughout this case study are <em>illustrative design assumptions</em> chosen for teaching purposes. Actual product specifications must be derived from validated engineering analysis and stakeholder requirements.</div>
+
+<h3>System Description</h3>
+<p>A smart temperature monitoring and automatic cooling system continuously measures the ambient or component temperature, activates a cooling fan when the temperature exceeds a defined threshold, displays the current temperature, and raises an alarm if the temperature reaches a critical level or if a sensor fault is detected.</p>
+
+<h3>System Block Diagram</h3>
+<div class="diagram-box">
+<svg width="100%" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker></defs>
+  <rect x="10" y="80" width="100" height="40" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="60" y="97" text-anchor="middle" font-size="11" font-weight="bold" fill="#0d2137">Temp Sensor</text>
+  <text x="60" y="112" text-anchor="middle" font-size="10" fill="#555">(e.g. NTC/DS18B20)</text>
+  <line x1="110" y1="100" x2="135" y2="100" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="135" y="60" width="130" height="80" rx="6" fill="#1565c0" stroke="#0d47a1" stroke-width="1.5"/>
+  <text x="200" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Microcontroller</text>
+  <text x="200" y="107" text-anchor="middle" font-size="10" fill="#cfd8dc">(ADC, Timer, GPIO)</text>
+  <text x="200" y="122" text-anchor="middle" font-size="10" fill="#cfd8dc">Firmware Logic</text>
+  <line x1="265" y1="85" x2="310" y2="65" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="310" y="40" width="110" height="40" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="365" y="57" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Display / LCD</text>
+  <text x="365" y="72" text-anchor="middle" font-size="10" fill="#555">Temperature readout</text>
+  <line x1="265" y1="100" x2="310" y2="100" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="310" y="80" width="110" height="40" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+  <text x="365" y="97" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">Cooling Fan</text>
+  <text x="365" y="112" text-anchor="middle" font-size="10" fill="#555">(PWM / relay driven)</text>
+  <line x1="265" y1="115" x2="310" y2="140" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="310" y="125" width="110" height="40" rx="6" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+  <text x="365" y="142" text-anchor="middle" font-size="11" font-weight="bold" fill="#b71c1c">Alarm / LED</text>
+  <text x="365" y="157" text-anchor="middle" font-size="10" fill="#555">Buzzer + indicator</text>
+  <line x1="420" y1="100" x2="460" y2="100" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="460" y="80" width="110" height="40" rx="6" fill="#ede7f6" stroke="#4527a0" stroke-width="1.5"/>
+  <text x="515" y="97" text-anchor="middle" font-size="11" font-weight="bold" fill="#311b92">Comm Module</text>
+  <text x="515" y="112" text-anchor="middle" font-size="10" fill="#555">(UART/BT – optional)</text>
+  <rect x="580" y="80" width="100" height="40" rx="6" fill="#f5f5f5" stroke="#757575" stroke-width="1.5"/>
+  <text x="630" y="97" text-anchor="middle" font-size="11" font-weight="bold" fill="#212121">Power Supply</text>
+  <text x="630" y="112" text-anchor="middle" font-size="10" fill="#555">5V / 3.3V regulated</text>
+  <line x1="580" y1="100" x2="570" y2="100" stroke="#555" stroke-width="1.5" marker-end="url(#a2)"/>
+  <line x1="580" y1="95" x2="420" y2="75" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="580" y1="105" x2="420" y2="125" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="580" y1="100" x2="420" y2="100" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="580" y1="100" x2="265" y2="100" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+</svg>
+</div>
+
+<h3>System Boundaries, Inputs &amp; Outputs</h3>
+<div class="two-col">
+  <div class="card"><h4>Inputs</h4><ul><li>Temperature sensor analog/digital signal</li><li>Power supply (5 V DC)</li><li>Optional: user configuration commands via UART</li><li>Optional: external alarm reset button</li></ul></div>
+  <div class="card"><h4>Outputs</h4><ul><li>Fan control signal (PWM or on/off)</li><li>LCD temperature display</li><li>LED status indicator</li><li>Buzzer alarm signal</li><li>Optional: serial data log via UART/Bluetooth</li></ul></div>
+</div>
+
+<h3>Requirements Development</h3>
+<h4>Stakeholder Needs</h4>
+<table>
+  <tr><th>ID</th><th>Stakeholder Need</th><th>Source</th></tr>
+  <tr><td>SN-01</td><td>The system must continuously monitor temperature and prevent overheating.</td><td>End User / Operator</td></tr>
+  <tr><td>SN-02</td><td>The cooling fan must activate automatically when temperature is too high.</td><td>End User</td></tr>
+  <tr><td>SN-03</td><td>The operator must be alerted when temperature reaches a dangerous level.</td><td>Safety Engineer</td></tr>
+  <tr><td>SN-04</td><td>The system must handle sensor failures gracefully.</td><td>QA Engineer</td></tr>
+  <tr><td>SN-05</td><td>The system must operate reliably on a 5 V DC supply.</td><td>Hardware Engineer</td></tr>
+  <tr><td>SN-06</td><td>Temperature data should be available for remote monitoring (optional).</td><td>Customer</td></tr>
+</table>
+
+<h4>Functional Requirements</h4>
+<table>
+  <tr><th>ID</th><th>Requirement</th><th>Priority</th></tr>
+  <tr><td><span class="req-id">FR-001</span></td><td>The system shall measure temperature continuously at intervals not exceeding 200 ms.</td><td><span class="badge badge-must">Must</span></td></tr>
+  <tr><td><span class="req-id">FR-002</span></td><td>The system shall display the current temperature on the LCD with a resolution of 0.1 °C.</td><td><span class="badge badge-must">Must</span></td></tr>
+  <tr><td><span class="req-id">FR-003</span></td><td>The firmware shall activate the cooling fan within 500 ms of the temperature exceeding 75 °C (illustrative threshold).</td><td><span class="badge badge-must">Must</span></td></tr>
+  <tr><td><span class="req-id">FR-004</span></td><td>The firmware shall deactivate the cooling fan when the temperature falls below 70 °C (illustrative hysteresis threshold) and has remained below that value for at least 5 seconds.</td><td><span class="badge badge-must">Must</span></td></tr>
+  <tr><td><span class="req-id">FR-005</span></td><td>The system shall activate the audible alarm and critical LED indicator when temperature exceeds 85 °C (illustrative critical threshold).</td><td><span class="badge badge-must">Must</span></td></tr>
+  <tr><td><span class="req-id">FR-006</span></td><td>The system shall detect a disconnected or short-circuited temperature sensor and enter a sensor-fault state within 1 second of fault occurrence.</td><td><span class="badge badge-must">Must</span></td></tr>
+  <tr><td><span class="req-id">FR-007</span></td><td>The system shall transmit temperature readings via UART at 9600 baud every 1 second when the communication module is present.</td><td><span class="badge badge-could">Could</span></td></tr>
+  <tr><td><span class="req-id">FR-008</span></td><td>The system shall complete initialization and begin normal monitoring within 2 seconds of power-on.</td><td><span class="badge badge-must">Must</span></td></tr>
+</table>
+
+<h4>Non-Functional Requirements</h4>
+<table>
+  <tr><th>ID</th><th>Requirement</th><th>Category</th></tr>
+  <tr><td><span class="req-id">NFR-001</span></td><td>The system shall respond to a temperature threshold crossing within 500 ms end-to-end (sensor read → fan activation).</td><td>Performance</td></tr>
+  <tr><td><span class="req-id">NFR-002</span></td><td>The system shall operate continuously for a minimum of 10,000 hours without unplanned downtime (illustrative MTBF target).</td><td>Reliability</td></tr>
+  <tr><td><span class="req-id">NFR-003</span></td><td>The system idle current consumption shall not exceed 50 mA at 5 V DC.</td><td>Power</td></tr>
+  <tr><td><span class="req-id">NFR-004</span></td><td>The firmware shall occupy no more than 80% of available flash memory to allow for future updates.</td><td>Memory</td></tr>
+  <tr><td><span class="req-id">NFR-005</span></td><td>The system shall operate correctly across an ambient temperature range of 0 °C to 50 °C.</td><td>Environmental</td></tr>
+  <tr><td><span class="req-id">NFR-006</span></td><td>The firmware shall be structured to allow replacement of the sensor driver module without modifying the control logic module.</td><td>Maintainability</td></tr>
+</table>
+
+<h4>Hardware Requirements</h4>
+<table>
+  <tr><th>ID</th><th>Requirement</th></tr>
+  <tr><td><span class="req-id">HW-001</span></td><td>The temperature sensor shall have a measurement range of at least −10 °C to +125 °C and an accuracy of ±1 °C or better.</td></tr>
+  <tr><td><span class="req-id">HW-002</span></td><td>The microcontroller shall provide at least one ADC channel (≥ 10-bit resolution) or a digital sensor interface (I²C/SPI/1-Wire).</td></tr>
+  <tr><td><span class="req-id">HW-003</span></td><td>The cooling fan driver circuit shall support a load current of at least 500 mA at 5 V DC.</td></tr>
+  <tr><td><span class="req-id">HW-004</span></td><td>The power supply shall provide a regulated 5 V ± 5% output with a minimum current capacity of 1 A.</td></tr>
+</table>
+
+<h4>Safety &amp; Fault-Handling Requirements</h4>
+<table>
+  <tr><th>ID</th><th>Requirement</th></tr>
+  <tr><td><span class="req-id">SAF-001</span></td><td>In the sensor-fault state, the system shall activate the cooling fan at maximum speed as a fail-safe measure.</td></tr>
+  <tr><td><span class="req-id">SAF-002</span></td><td>The system shall not allow the fan to be deactivated while the temperature reading is above the critical threshold (85 °C illustrative).</td></tr>
+  <tr><td><span class="req-id">SAF-003</span></td><td>The alarm shall remain active until manually acknowledged by the operator or until the temperature returns below the warning threshold.</td></tr>
+  <tr><td><span class="req-id">SAF-004</span></td><td>The system shall perform a self-test of the sensor interface during initialization and report any detected fault via the status indicator.</td></tr>
+</table>
+</section>
+
+<!-- SECTION 4: SRS -->
+<section id="srs">
+<h2 class="sec-title">4. Software Requirements Specification (SRS)</h2>
+<div class="callout">An SRS is the primary contract between stakeholders and the development team. It must be clear, complete, consistent, and verifiable. ISO/IEC/IEEE 29148:2018 provides guidance on requirements engineering processes and SRS structure — it is a reference standard, not a mandatory certification requirement unless specified by the project or customer.</div>
+
+<h3>SRS Structure Overview</h3>
+<div class="toc-grid">
+  <div class="toc-item">1. Introduction</div>
+  <div class="toc-item">2. Purpose &amp; Scope</div>
+  <div class="toc-item">3. System Overview</div>
+  <div class="toc-item">4. Stakeholders &amp; User Classes</div>
+  <div class="toc-item">5. Functional Requirements</div>
+  <div class="toc-item">6. Non-Functional Requirements</div>
+  <div class="toc-item">7. Hardware Requirements</div>
+  <div class="toc-item">8. Software &amp; Firmware Requirements</div>
+  <div class="toc-item">9. External Interface Requirements</div>
+  <div class="toc-item">10. Timing &amp; Performance Constraints</div>
+  <div class="toc-item">11. Safety &amp; Security Requirements</div>
+  <div class="toc-item">12. Environmental &amp; Power Constraints</div>
+  <div class="toc-item">13. Assumptions &amp; Dependencies</div>
+  <div class="toc-item">14. Acceptance Criteria</div>
+  <div class="toc-item">15. Requirement Traceability</div>
+</div>
+
+<h3>Sample SRS: Smart Temperature Monitoring &amp; Cooling System</h3>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>SRS Section 1–4: Introduction, Scope, Overview, Stakeholders</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <h4>1. Introduction</h4>
+  <p>This document specifies the requirements for the Smart Temperature Monitoring and Automatic Cooling System (STMACS). It is intended for use by hardware engineers, firmware developers, QA engineers, and project managers.</p>
+  <h4>2. Purpose &amp; Scope</h4>
+  <p>The purpose of STMACS is to monitor ambient or component temperature, automatically activate cooling when required, alert operators of critical conditions, and handle sensor faults safely. The system is intended for use in industrial enclosures and electronic equipment cabinets.</p>
+  <h4>3. System Overview</h4>
+  <p>STMACS consists of a temperature sensor, microcontroller, cooling fan, LCD display, alarm module, and optional UART communication interface. The system operates on a 5 V DC regulated supply.</p>
+  <h4>4. Stakeholders &amp; User Classes</h4>
+  <table>
+    <tr><th>Stakeholder</th><th>Role</th><th>Primary Interest</th></tr>
+    <tr><td>Operator</td><td>End user</td><td>Reliable cooling, clear alerts</td></tr>
+    <tr><td>Hardware Engineer</td><td>Designer</td><td>Component specs, interfaces</td></tr>
+    <tr><td>Firmware Engineer</td><td>Developer</td><td>Control logic, timing, interfaces</td></tr>
+    <tr><td>QA Engineer</td><td>Tester</td><td>Testable, verifiable requirements</td></tr>
+    <tr><td>Safety Engineer</td><td>Reviewer</td><td>Fault handling, fail-safe behavior</td></tr>
+    <tr><td>Customer/Client</td><td>Buyer</td><td>Reliability, cost, features</td></tr>
+  </table>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>SRS Section 5–8: Functional, Non-Functional, Hardware, Firmware Requirements</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <p>See the Case Study section above for the full requirement tables (FR-001 to FR-008, NFR-001 to NFR-006, HW-001 to HW-004).</p>
+  <h4>8. Software &amp; Firmware Requirements</h4>
+  <table>
+    <tr><th>ID</th><th>Requirement</th></tr>
+    <tr><td><span class="req-id">SW-001</span></td><td>The firmware shall implement a main control loop executing at a minimum rate of 5 Hz (every 200 ms).</td></tr>
+    <tr><td><span class="req-id">SW-002</span></td><td>The firmware shall implement hysteresis control for fan activation/deactivation to prevent rapid cycling.</td></tr>
+    <tr><td><span class="req-id">SW-003</span></td><td>The firmware shall store the last 10 temperature readings in a circular buffer for trend analysis.</td></tr>
+    <tr><td><span class="req-id">SW-004</span></td><td>The firmware shall use a watchdog timer with a timeout of 1 second to recover from software hangs.</td></tr>
+  </table>
+</div>
+
+<button class="collapsible" onclick="toggleColl(this)"><span>SRS Section 9–15: Interfaces, Timing, Safety, Environment, Assumptions, Acceptance, Traceability</span><span class="arrow">▶</span></button>
+<div class="coll-content">
+  <h4>9. External Interface Requirements</h4>
+  <table>
+    <tr><th>ID</th><th>Requirement</th></tr>
+    <tr><td><span class="req-id">IF-001</span></td><td>The sensor interface shall use I²C at 400 kHz (Fast Mode) or 1-Wire protocol, as determined by the selected sensor component.</td></tr>
+    <tr><td><span class="req-id">IF-002</span></td><td>The LCD interface shall use a 4-bit parallel interface or I²C LCD driver.</td></tr>
+    <tr><td><span class="req-id">IF-003</span></td><td>The UART interface shall operate at 9600 baud, 8 data bits, no parity, 1 stop bit (9600-8N1).</td></tr>
+  </table>
+  <h4>10. Timing &amp; Performance Constraints</h4>
+  <table>
+    <tr><th>ID</th><th>Constraint</th><th>Value (Illustrative)</th></tr>
+    <tr><td><span class="req-id">TIM-001</span></td><td>Sensor sampling interval</td><td>≤ 200 ms</td></tr>
+    <tr><td><span class="req-id">TIM-002</span></td><td>Fan activation latency (threshold crossing to fan on)</td><td>≤ 500 ms</td></tr>
+    <tr><td><span class="req-id">TIM-003</span></td><td>Alarm activation latency (critical threshold to alarm on)</td><td>≤ 500 ms</td></tr>
+    <tr><td><span class="req-id">TIM-004</span></td><td>System initialization time (power-on to normal monitoring)</td><td>≤ 2 s</td></tr>
+    <tr><td><span class="req-id">TIM-005</span></td><td>Sensor fault detection time</td><td>≤ 1 s</td></tr>
+  </table>
+  <h4>13. Assumptions &amp; Dependencies</h4>
+  <ul>
+    <li>The power supply provides stable 5 V ± 5% DC at all times during normal operation.</li>
+    <li>The temperature sensor is correctly installed and calibrated before deployment.</li>
+    <li>The ambient temperature of the installation environment is within 0–50 °C.</li>
+    <li>Threshold values (75 °C, 85 °C, 70 °C) are illustrative and must be confirmed with the customer for the actual product.</li>
+  </ul>
+  <h4>14. Acceptance Criteria</h4>
+  <ul>
+    <li>All Must Have functional requirements (FR-001 to FR-008) pass their corresponding test cases.</li>
+    <li>Fan activation occurs within 500 ms of threshold crossing in at least 95% of test runs.</li>
+    <li>Sensor fault is detected and fail-safe activated within 1 second in all test runs.</li>
+    <li>System initializes within 2 seconds in all test runs.</li>
+  </ul>
+</div>
+
+<h3>Requirement Quality: Vague vs. Measurable</h3>
+<table>
+  <tr><th>Vague Requirement</th><th>Problem</th><th>Improved Requirement</th></tr>
+  <tr><td>"The fan should respond quickly."</td><td>No trigger defined, no time value, not testable</td><td>"The firmware shall activate the cooling fan within 500 ms (±50 ms) of the temperature sensor reading exceeding 75 °C, under normal operating conditions."</td></tr>
+  <tr><td>"The system should be reliable."</td><td>No metric, not measurable</td><td>"The system shall achieve a Mean Time Between Failures (MTBF) of at least 10,000 hours under specified operating conditions."</td></tr>
+  <tr><td>"The display should show temperature."</td><td>No format, resolution, or update rate</td><td>"The LCD shall display the current temperature in degrees Celsius, updated every 500 ms, with a resolution of 0.1 °C."</td></tr>
+  <tr><td>"Handle sensor errors."</td><td>No definition of error, no response specified</td><td>"The firmware shall detect a sensor disconnection (ADC reading outside valid range) within 1 second and activate the cooling fan at maximum speed as a fail-safe measure."</td></tr>
+</table>
+</section>
+
+<!-- SECTION 5: F & NFR -->
+<section id="fnfr">
+<h2 class="sec-title">5. Functional &amp; Non-Functional Requirements</h2>
+<div class="two-col">
+<div>
+<h3>Functional Requirements</h3>
+<p>Describe <strong>what</strong> the system does — its behaviors, functions, and responses to inputs.</p>
+<ul>
+  <li><strong>System Inputs/Outputs:</strong> Sensor readings, fan control signals, display output</li>
+  <li><strong>Control Logic:</strong> Threshold comparison, hysteresis, state transitions</li>
+  <li><strong>Sensor Data Processing:</strong> ADC conversion, filtering, calibration offset</li>
+  <li><strong>Fan Activation/Deactivation:</strong> Trigger conditions, PWM duty cycle</li>
+  <li><strong>User Interaction:</strong> Alarm acknowledgment, configuration input</li>
+  <li><strong>Error Handling:</strong> Sensor fault detection, watchdog recovery</li>
+  <li><strong>Communication:</strong> UART data transmission format and rate</li>
+</ul>
+</div>
+<div>
+<h3>Non-Functional Requirements</h3>
+<p>Describe <strong>how well</strong> the system performs its functions — quality attributes and constraints.</p>
+<ul>
+  <li><strong>Response Time:</strong> End-to-end latency from event to action</li>
+  <li><strong>Reliability:</strong> MTBF, availability percentage</li>
+  <li><strong>Power Consumption:</strong> Idle and active current limits</li>
+  <li><strong>Memory Constraints:</strong> Flash and RAM usage limits</li>
+  <li><strong>Environmental:</strong> Operating temperature, humidity range</li>
+  <li><strong>Maintainability:</strong> Modular firmware, documented interfaces</li>
+  <li><strong>Safety:</strong> Fail-safe behavior, fault detection coverage</li>
+  <li><strong>Real-Time Behavior:</strong> Deterministic execution, deadline compliance</li>
+</ul>
+</div>
+</div>
+
+<h3>Comparison Table</h3>
+<table>
+  <tr><th>Aspect</th><th>Functional Requirement</th><th>Non-Functional Requirement</th></tr>
+  <tr><td>Answers</td><td>What does the system do?</td><td>How well does it do it?</td></tr>
+  <tr><td>Focus</td><td>Behavior, function, feature</td><td>Quality, constraint, attribute</td></tr>
+  <tr><td>Testability</td><td>Pass/fail against defined behavior</td><td>Measured against a metric or threshold</td></tr>
+  <tr><td>Example</td><td>Fan activates when T &gt; 75 °C</td><td>Fan activates within 500 ms</td></tr>
+  <tr><td>Failure impact</td><td>Feature missing or wrong</td><td>System works but poorly or unsafely</td></tr>
+  <tr><td>Documented in</td><td>SRS functional section</td><td>SRS non-functional / constraints section</td></tr>
+</table>
+
+<div class="callout warn"><strong>Why NFRs must be measurable:</strong> "The system shall be fast" is untestable. "The system shall activate the fan within 500 ms" is testable. Always attach a metric, unit, and condition to non-functional requirements.</div>
+
+<h3>Common Exam Questions</h3>
+<ul>
+  <li>Q: Is "The system shall log temperature data" functional or non-functional? → <strong>Functional</strong> (it describes a behavior).</li>
+  <li>Q: Is "The system shall use less than 50 mA in idle mode" functional or non-functional? → <strong>Non-Functional</strong> (power constraint).</li>
+  <li>Q: Can a requirement be both? → Yes, a requirement may have both functional and non-functional aspects; they should be separated into distinct statements.</li>
+</ul>
+</section>
+
+<!-- SECTION 6: ELICITATION -->
+<section id="elicitation">
+<h2 class="sec-title">6. Requirements Elicitation Techniques</h2>
+<div class="callout">Elicitation is the most critical and challenging phase of RE. The quality of all downstream work depends on how well requirements are gathered.</div>
+
+<table>
+  <tr><th>Technique</th><th>Description</th><th>Advantages</th><th>Disadvantages</th><th>Best For</th><th>Embedded Example</th></tr>
+  <tr><td><strong>Interviews</strong></td><td>Structured or unstructured one-on-one discussions with stakeholders</td><td>Deep insight, flexible, clarifies ambiguity</td><td>Time-consuming, interviewer bias</td><td>Key stakeholders, complex systems</td><td>Interviewing a factory operator about acceptable alarm response time</td></tr>
+  <tr><td><strong>Questionnaires</strong></td><td>Written surveys distributed to multiple stakeholders</td><td>Reaches many people, quantifiable</td><td>Low response rate, no follow-up</td><td>Large user groups, initial scoping</td><td>Survey of 50 technicians about display preferences</td></tr>
+  <tr><td><strong>Observation</strong></td><td>Watching users interact with existing systems</td><td>Reveals tacit knowledge, real workflows</td><td>Observer effect, time-intensive</td><td>Replacing legacy systems</td><td>Observing how operators currently monitor temperature manually</td></tr>
+  <tr><td><strong>Brainstorming</strong></td><td>Group session to generate ideas freely</td><td>Creative, fast, team engagement</td><td>Dominant voices, unfocused</td><td>Early concept phase</td><td>Team session to identify all possible fault conditions</td></tr>
+  <tr><td><strong>Workshops</strong></td><td>Structured group sessions with multiple stakeholders</td><td>Consensus building, efficient</td><td>Scheduling difficulty, facilitation skill needed</td><td>Cross-functional alignment</td><td>Joint HW/FW/QA workshop to agree on timing requirements</td></tr>
+  <tr><td><strong>Document Analysis</strong></td><td>Reviewing existing specs, standards, manuals</td><td>Objective, no stakeholder needed</td><td>Documents may be outdated</td><td>Regulatory requirements, legacy systems</td><td>Reviewing datasheet of existing sensor to extract interface requirements</td></tr>
+  <tr><td><strong>Prototyping</strong></td><td>Building a working model to elicit feedback</td><td>Concrete, reduces misunderstanding</td><td>Costly, prototype may become product</td><td>UI/UX, novel systems</td><td>LCD display prototype to confirm temperature format with operator</td></tr>
+  <tr><td><strong>Use Cases / Scenarios</strong></td><td>Describing system behavior from user perspective</td><td>User-focused, easy to validate</td><td>May miss non-functional aspects</td><td>Behavior-driven systems</td><td>Use case: "Operator receives alarm when T exceeds 85 °C"</td></tr>
+  <tr><td><strong>Interface Analysis</strong></td><td>Analyzing hardware/software interfaces and protocols</td><td>Precise, technical</td><td>Requires technical expertise</td><td>Hardware integration</td><td>Analyzing I²C timing requirements from sensor datasheet</td></tr>
+</table>
+
+<h3>Resolving Conflicting Stakeholder Expectations</h3>
+<ol>
+  <li><strong>Identify the conflict</strong> explicitly — document both positions.</li>
+  <li><strong>Understand the underlying need</strong> — often conflicts are about solutions, not goals.</li>
+  <li><strong>Prioritize by safety and business impact</strong> — safety requirements take precedence.</li>
+  <li><strong>Negotiate a compromise</strong> — e.g., configurable thresholds satisfy both strict and lenient users.</li>
+  <li><strong>Escalate to a decision authority</strong> if consensus cannot be reached.</li>
+  <li><strong>Document the decision and rationale</strong> in the SRS.</li>
+</ol>
+<div class="callout success"><strong>Example:</strong> The operator wants the fan to activate at 70 °C (conservative), but the hardware engineer says 80 °C is needed to avoid unnecessary wear. Resolution: Set activation at 75 °C with a configurable range of 65–80 °C, documented as a design decision.</div>
+</section>
+
+<!-- SECTION 7: DIAGRAMS -->
+<section id="diagrams">
+<h2 class="sec-title">7. Requirements Modeling &amp; Technical Diagrams</h2>
+
+<h3>Use-Case Diagram: Temperature Monitoring System</h3>
+<div class="diagram-box">
+<svg width="100%" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1" y="1" width="678" height="318" rx="10" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="340" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#0d2137">Use-Case Diagram: Smart Temperature Monitoring System</text>
+  <!-- System boundary -->
+  <rect x="160" y="35" width="360" height="265" rx="8" fill="none" stroke="#1565c0" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="340" y="52" text-anchor="middle" font-size="11" fill="#1565c0" font-weight="bold">«System» STMACS</text>
+  <!-- Use cases -->
+  <ellipse cx="340" cy="90" rx="80" ry="22" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="340" y="94" text-anchor="middle" font-size="11" fill="#0d2137">Monitor Temperature</text>
+  <ellipse cx="260" cy="155" rx="75" ry="22" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="260" y="159" text-anchor="middle" font-size="11" fill="#0d2137">Activate Cooling Fan</text>
+  <ellipse cx="420" cy="155" rx="75" ry="22" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="420" y="159" text-anchor="middle" font-size="11" fill="#0d2137">Display Temperature</text>
+  <ellipse cx="260" cy="225" rx="75" ry="22" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+  <text x="260" y="229" text-anchor="middle" font-size="11" fill="#b71c1c">Trigger Alarm</text>
+  <ellipse cx="420" cy="225" rx="75" ry="22" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+  <text x="420" y="229" text-anchor="middle" font-size="11" fill="#bf360c">Handle Sensor Fault</text>
+  <ellipse cx="340" cy="280" rx="80" ry="22" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="340" y="284" text-anchor="middle" font-size="11" fill="#1b5e20">Transmit Data (UART)</text>
+  <!-- Actors -->
+  <!-- Operator -->
+  <circle cx="60" cy="155" r="14" fill="#fff" stroke="#0d2137" stroke-width="2"/>
+  <line x1="60" y1="169" x2="60" y2="205" stroke="#0d2137" stroke-width="2"/>
+  <line x1="60" y1="180" x2="40" y2="195" stroke="#0d2137" stroke-width="2"/>
+  <line x1="60" y1="180" x2="80" y2="195" stroke="#0d2137" stroke-width="2"/>
+  <line x1="60" y1="205" x2="45" y2="225" stroke="#0d2137" stroke-width="2"/>
+  <line x1="60" y1="205" x2="75" y2="225" stroke="#0d2137" stroke-width="2"/>
+  <text x="60" y="238" text-anchor="middle" font-size="11" font-weight="bold" fill="#0d2137">Operator</text>
+  <!-- Remote System -->
+  <rect x="590" y="140" width="80" height="30" rx="5" fill="#ede7f6" stroke="#4527a0" stroke-width="1.5"/>
+  <text x="630" y="160" text-anchor="middle" font-size="10" fill="#311b92">Remote System</text>
+  <!-- Connections -->
+  <line x1="74" y1="148" x2="160" y2="100" stroke="#555" stroke-width="1.2"/>
+  <line x1="74" y1="155" x2="185" y2="155" stroke="#555" stroke-width="1.2"/>
+  <line x1="74" y1="162" x2="185" y2="220" stroke="#555" stroke-width="1.2"/>
+  <line x1="590" y1="155" x2="495" y2="225" stroke="#555" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="340" y1="112" x2="260" y2="133" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="340" y1="112" x2="420" y2="133" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="260" y1="177" x2="260" y2="203" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="420" y1="177" x2="420" y2="203" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="340" y="315" text-anchor="middle" font-size="10" fill="#888">Dashed lines = «include»/«extend» relationships (illustrative)</text>
+</svg>
+</div>
+
+<h3>State-Machine Diagram: Temperature Monitoring System</h3>
+<div class="callout warn">Threshold values shown (75 °C, 85 °C, 70 °C) are <em>illustrative</em> for teaching purposes only.</div>
+<div class="diagram-box">
+<svg width="100%" viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="sm" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#333"/></marker></defs>
+  <text x="380" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#0d2137">State-Machine Diagram: STMACS Firmware</text>
+  <!-- States -->
+  <!-- INIT -->
+  <rect x="300" y="35" width="160" height="55" rx="10" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+  <text x="380" y="58" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">INITIALIZATION</text>
+  <text x="380" y="75" text-anchor="middle" font-size="10" fill="#cfd8dc">Self-test, sensor check</text>
+  <!-- NORMAL -->
+  <rect x="300" y="155" width="160" height="55" rx="10" fill="#00897b" stroke="#00695c" stroke-width="2"/>
+  <text x="380" y="178" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">NORMAL MONITORING</text>
+  <text x="380" y="195" text-anchor="middle" font-size="10" fill="#e0f2f1">T ≤ 75 °C (illustrative)</text>
+  <!-- COOLING -->
+  <rect x="100" y="275" width="160" height="55" rx="10" fill="#f57c00" stroke="#e65100" stroke-width="2"/>
+  <text x="180" y="298" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">COOLING ACTIVE</text>
+  <text x="180" y="315" text-anchor="middle" font-size="10" fill="#fff3e0">Fan ON, T &gt; 75 °C</text>
+  <!-- SENSOR FAULT -->
+  <rect x="500" y="275" width="160" height="55" rx="10" fill="#757575" stroke="#424242" stroke-width="2"/>
+  <text x="580" y="298" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">SENSOR FAULT</text>
+  <text x="580" y="315" text-anchor="middle" font-size="10" fill="#f5f5f5">Fan ON (fail-safe)</text>
+  <!-- OVER-TEMP ALARM -->
+  <rect x="300" y="355" width="160" height="55" rx="10" fill="#c62828" stroke="#b71c1c" stroke-width="2"/>
+  <text x="380" y="378" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">OVER-TEMP ALARM</text>
+  <text x="380" y="395" text-anchor="middle" font-size="10" fill="#ffcdd2">T &gt; 85 °C, alarm ON</text>
+  <!-- Start dot -->
+  <circle cx="380" cy="18" r="8" fill="#0d2137"/>
+  <line x1="380" y1="26" x2="380" y2="35" stroke="#0d2137" stroke-width="2" marker-end="url(#sm)"/>
+  <!-- INIT → NORMAL -->
+  <line x1="380" y1="90" x2="380" y2="155" stroke="#333" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="390" y="128" font-size="10" fill="#333">Init OK</text>
+  <!-- NORMAL → COOLING -->
+  <path d="M 310 210 Q 200 240 180 275" fill="none" stroke="#f57c00" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="195" y="248" font-size="10" fill="#e65100">T &gt; 75 °C</text>
+  <!-- COOLING → NORMAL -->
+  <path d="M 260 275 Q 310 245 350 210" fill="none" stroke="#00897b" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="295" y="258" font-size="10" fill="#00695c">T &lt; 70 °C for 5s</text>
+  <!-- COOLING → OVER-TEMP -->
+  <path d="M 180 330 Q 180 370 300 385" fill="none" stroke="#c62828" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="175" y="368" font-size="10" fill="#c62828">T &gt; 85 °C</text>
+  <!-- NORMAL → OVER-TEMP -->
+  <path d="M 380 210 L 380 355" fill="none" stroke="#c62828" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="385" y="290" font-size="10" fill="#c62828">T &gt; 85 °C</text>
+  <!-- OVER-TEMP → COOLING -->
+  <path d="M 300 385 Q 200 390 180 330" fill="none" stroke="#f57c00" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="195" y="400" font-size="10" fill="#e65100">Alarm ack, T &lt; 85 °C</text>
+  <!-- NORMAL → SENSOR FAULT -->
+  <path d="M 460 182 Q 540 182 580 275" fill="none" stroke="#757575" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="520" y="230" font-size="10" fill="#555">Sensor error</text>
+  <!-- SENSOR FAULT → NORMAL -->
+  <path d="M 500 295 Q 460 240 460 210" fill="none" stroke="#00897b" stroke-width="2" marker-end="url(#sm)"/>
+  <text x="462" y="258" font-size="10" fill="#00695c">Sensor restored</text>
+  <!-- INIT → SENSOR FAULT -->
+  <path d="M 460 62 Q 580 62 580 275" fill="none" stroke="#757575" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sm)"/>
+  <text x="590" y="160" font-size="10" fill="#757575">Init fault</text>
+</svg>
+</div>
+
+<h3>Context Diagram</h3>
+<div class="diagram-box">
+<svg width="100%" viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="cd" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#555"/></marker></defs>
+  <text x="300" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#0d2137">Context Diagram: STMACS</text>
+  <!-- Central system -->
+  <rect x="210" y="90" width="180" height="80" rx="10" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+  <text x="300" y="127" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">STMACS</text>
+  <text x="300" y="145" text-anchor="middle" font-size="10" fill="#cfd8dc">Temperature Monitor</text>
+  <!-- External entities -->
+  <rect x="10" y="105" width="110" height="40" rx="6" fill="#e3f2fd" stroke="#1565c0"/>
+  <text x="65" y="130" text-anchor="middle" font-size="11" fill="#0d2137">Temp Sensor</text>
+  <rect x="480" y="105" width="110" height="40" rx="6" fill="#e8f5e9" stroke="#2e7d32"/>
+  <text x="535" y="130" text-anchor="middle" font-size="11" fill="#1b5e20">Operator</text>
+  <rect x="210" y="200" width="110" height="40" rx="6" fill="#fff3e0" stroke="#e65100"/>
+  <text x="265" y="225" text-anchor="middle" font-size="11" fill="#bf360c">Cooling Fan</text>
+  <rect x="340" y="200" width="110" height="40" rx="6" fill="#fce4ec" stroke="#c62828"/>
+  <text x="395" y="225" text-anchor="middle" font-size="11" fill="#b71c1c">Alarm / Display</text>
+  <rect x="210" y="30" width="110" height="40" rx="6" fill="#ede7f6" stroke="#4527a0"/>
+  <text x="265" y="55" text-anchor="middle" font-size="11" fill="#311b92">Remote System</text>
+  <!-- Arrows -->
+  <line x1="120" y1="125" x2="210" y2="125" stroke="#555" stroke-width="1.5" marker-end="url(#cd)"/>
+  <text x="160" y="118" text-anchor="middle" font-size="9" fill="#555">Temp data</text>
+  <line x1="390" y1="125" x2="480" y2="125" stroke="#555" stroke-width="1.5" marker-end="url(#cd)"/>
+  <text x="435" y="118" text-anchor="middle" font-size="9" fill="#555">Alerts, display</text>
+  <line x1="480" y1="135" x2="390" y2="145" stroke="#555" stroke-width="1.5" marker-end="url(#cd)"/>
+  <text x="445" y="148" text-anchor="middle" font-size="9" fill="#555">Ack command</text>
+  <line x1="265" y1="170" x2="265" y2="200" stroke="#555" stroke-width="1.5" marker-end="url(#cd)"/>
+  <text x="240" y="190" text-anchor="middle" font-size="9" fill="#555">Fan ctrl</text>
+  <line x1="340" y1="170" x2="395" y2="200" stroke="#555" stroke-width="1.5" marker-end="url(#cd)"/>
+  <text x="380" y="190" text-anchor="middle" font-size="9" fill="#555">Alarm/LCD</text>
+  <line x1="265" y1="90" x2="265" y2="70" stroke="#555" stroke-width="1.5" marker-end="url(#cd)"/>
+  <text x="240" y="84" text-anchor="middle" font-size="9" fill="#555">UART data</text>
+</svg>
+</div>
+
+<h3>Requirement Traceability Workflow</h3>
+<div class="diagram-box">
+<svg width="100%" viewBox="0 0 700 80" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="tw" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1565c0"/></marker></defs>
+  <rect x="5" y="20" width="90" height="40" rx="6" fill="#e3f2fd" stroke="#1565c0"/><text x="50" y="45" text-anchor="middle" font-size="11" fill="#0d2137">Stakeholder Need</text>
+  <line x1="95" y1="40" x2="115" y2="40" stroke="#1565c0" stroke-width="2" marker-end="url(#tw)"/>
+  <rect x="115" y="20" width="90" height="40" rx="6" fill="#1565c0" stroke="#0d47a1"/><text x="160" y="45" text-anchor="middle" font-size="11" fill="#fff">Requirement (SRS)</text>
+  <line x1="205" y1="40" x2="225" y2="40" stroke="#1565c0" stroke-width="2" marker-end="url(#tw)"/>
+  <rect x="225" y="20" width="90" height="40" rx="6" fill="#00897b" stroke="#00695c"/><text x="270" y="45" text-anchor="middle" font-size="11" fill="#fff">Design Component</text>
+  <line x1="315" y1="40" x2="335" y2="40" stroke="#1565c0" stroke-width="2" marker-end="url(#tw)"/>
+  <rect x="335" y="20" width="90" height="40" rx="6" fill="#f57c00" stroke="#e65100"/><text x="380" y="45" text-anchor="middle" font-size="11" fill="#fff">Code / Firmware</text>
+  <line x1="425" y1="40" x2="445" y2="40" stroke="#1565c0" stroke-width="2" marker-end="url(#tw)"/>
+  <rect x="445" y="20" width="90" height="40" rx="6" fill="#c62828" stroke="#b71c1c"/><text x="490" y="45" text-anchor="middle" font-size="11" fill="#fff">Test Case</text>
+  <line x1="535" y1="40" x2="555" y2="40" stroke="#1565c0" stroke-width="2" marker-end="url(#tw)"/>
+  <rect x="555" y="20" width="90" height="40" rx="6" fill="#4527a0" stroke="#311b92"/><text x="600" y="45" text-anchor="middle" font-size="11" fill="#fff">Test Result</text>
+  <text x="350" y="75" text-anchor="middle" font-size="10" fill="#888">← Backward Traceability &nbsp;&nbsp;&nbsp;&nbsp; Forward Traceability →</text>
+</svg>
+</div>
+
+<h3>Diagram Roles Summary</h3>
+<table>
+  <tr><th>Diagram</th><th>Purpose in RE</th></tr>
+  <tr><td>Use-Case Diagram</td><td>Shows system functions from user perspective; validates scope</td></tr>
+  <tr><td>State-Machine Diagram</td><td>Models system behavior and state transitions; validates control logic requirements</td></tr>
+  <tr><td>Context Diagram</td><td>Defines system boundary and external interfaces</td></tr>
+  <tr><td>Block Diagram</td><td>Shows hardware components and their connections</td></tr>
+  <tr><td>Traceability Workflow</td><td>Shows how requirements link from need to test result</td></tr>
+</table>
+</section>
+
+<!-- SECTION 8: QUALITY & PRIORITY -->
+<section id="quality">
+<h2 class="sec-title">8. Requirement Quality &amp; Prioritization</h2>
+<h3>Characteristics of a Good Requirement (SMART+)</h3>
+<div class="flex-row">
+  <div class="card"><strong>✔ Correct</strong><br>Accurately reflects stakeholder need</div>
+  <div class="card"><strong>✔ Clear &amp; Unambiguous</strong><br>Only one possible interpretation</div>
+  <div class="card"><strong>✔ Complete</strong><br>All conditions and exceptions covered</div>
+  <div class="card"><strong>✔ Consistent</strong><br>No contradiction with other requirements</div>
+  <div class="card"><strong>✔ Feasible</strong><br>Achievable within project constraints</div>
+  <div class="card"><strong>✔ Necessary</strong><br>Removal would cause a gap</div>
+  <div class="card"><strong>✔ Verifiable</strong><br>Can be tested or measured</div>
+  <div class="card"><strong>✔ Traceable</strong><br>Linked to a source and a test</div>
+  <div class="card"><strong>✔ Atomic</strong><br>Expresses exactly one requirement</div>
+  <div class="card"><strong>✔ Modifiable</strong><br>Can be changed without cascading errors</div>
+</div>
+
+<h3>Good vs. Bad Requirements</h3>
+<table>
+  <tr><th>Bad Requirement</th><th>Problem</th><th>Good Requirement</th></tr>
+  <tr><td>"The system should be fast."</td><td>No metric, not testable</td><td>"The system shall activate the fan within 500 ms of threshold crossing."</td></tr>
+  <tr><td>"The fan and alarm shall activate and the display shall update when temperature is high."</td><td>Not atomic — three requirements in one</td><td>Separate into FR-003 (fan), FR-005 (alarm), FR-002 (display).</td></tr>
+  <tr><td>"The system should usually work correctly."</td><td>Ambiguous ("usually"), not verifiable</td><td>"The system shall correctly activate the fan in ≥ 99% of threshold-crossing events during acceptance testing."</td></tr>
+  <tr><td>"The sensor may sometimes fail."</td><td>Not a requirement — it's an assumption</td><td>"The system shall detect a sensor disconnection within 1 second and activate the fail-safe cooling mode."</td></tr>
+</table>
+
+<h3>MoSCoW Prioritization</h3>
+<table>
+  <tr><th>Priority</th><th>Meaning</th><th>Example (STMACS)</th></tr>
+  <tr><td><span class="badge badge-must">Must Have</span></td><td>Critical; system fails without it</td><td>FR-001 (temperature monitoring), FR-003 (fan activation), SAF-001 (fail-safe)</td></tr>
+  <tr><td><span class="badge badge-should">Should Have</span></td><td>Important but not critical for first release</td><td>FR-002 (LCD display), NFR-002 (MTBF target)</td></tr>
+  <tr><td><span class="badge badge-could">Could Have</span></td><td>Desirable if time/budget allows</td><td>FR-007 (UART transmission), SW-003 (circular buffer)</td></tr>
+  <tr><td><span class="badge badge-wont">Won't Have (now)</span></td><td>Out of scope for current release</td><td>Bluetooth mobile app integration, cloud data logging</td></tr>
+</table>
+
+<h3>Priority vs. Risk vs. Severity vs. Effort</h3>
+<table>
+  <tr><th>Concept</th><th>Definition</th><th>Example</th></tr>
+  <tr><td><strong>Priority</strong></td><td>Importance to stakeholders / business</td><td>SAF-001 is highest priority</td></tr>
+  <tr><td><strong>Risk</strong></td><td>Probability × impact of failure</td><td>Sensor fault with no fail-safe = high risk</td></tr>
+  <tr><td><strong>Severity</strong></td><td>Consequence if requirement is not met</td><td>Missing alarm = potential equipment damage</td></tr>
+  <tr><td><strong>Effort</strong></td><td>Resources needed to implement</td><td>UART logging = low effort, low priority</td></tr>
+</table>
+</section>
+
+<!-- SECTION 9: RTM -->
+<section id="rtm">
+<h2 class="sec-title">9. Requirement Traceability Matrix (RTM)</h2>
+<div class="callout">The RTM links every requirement to its source, design component, test case, and current status. It enables impact analysis, coverage measurement, and change management.</div>
+
+<div class="rtm-filter">
+  <label><strong>Filter by Status:</strong></label>
+  <select id="rtm-status" onchange="filterRTM()">
+    <option value="all">All</option>
+    <option value="Verified">Verified</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Not Started">Not Started</option>
+    <option value="Deferred">Deferred</option>
+  </select>
+  &nbsp;
+  <label><strong>Filter by Type:</strong></label>
+  <select id="rtm-type" onchange="filterRTM()">
+    <option value="all">All</option>
+    <option value="FR">Functional</option>
+    <option value="NFR">Non-Functional</option>
+    <option value="HW">Hardware</option>
+    <option value="SAF">Safety</option>
+    <option value="SW">Software</option>
+  </select>
+</div>
+
+<table id="rtm-table">
+  <tr><th>Req ID</th><th>Description</th><th>Source</th><th>Type</th><th>Design Component</th><th>Verification Method</th><th>Test Case ID</th><th>Status</th></tr>
+  <tr data-type="FR" data-status="Verified"><td><span class="req-id">FR-001</span></td><td>Measure temperature every ≤ 200 ms</td><td>SN-01</td><td>FR</td><td>SensorDriver module</td><td>Test</td><td>TC-001</td><td><span style="color:#2e7d32;font-weight:600">Verified</span></td></tr>
+  <tr data-type="FR" data-status="Verified"><td><span class="req-id">FR-002</span></td><td>Display temperature, 0.1 °C resolution</td><td>SN-01</td><td>FR</td><td>DisplayDriver module</td><td>Demonstration</td><td>TC-002</td><td><span style="color:#2e7d32;font-weight:600">Verified</span></td></tr>
+  <tr data-type="FR" data-status="In Progress"><td><span class="req-id">FR-003</span></td><td>Activate fan within 500 ms of T &gt; 75 °C</td><td>SN-02</td><td>FR</td><td>FanController module</td><td>Test</td><td>TC-003</td><td><span style="color:#f57c00;font-weight:600">In Progress</span></td></tr>
+  <tr data-type="FR" data-status="In Progress"><td><span class="req-id">FR-004</span></td><td>Deactivate fan when T &lt; 70 °C for 5 s</td><td>SN-02</td><td>FR</td><td>FanController module</td><td>Test</td><td>TC-004</td><td><span style="color:#f57c00;font-weight:600">In Progress</span></td></tr>
+  <tr data-type="FR" data-status="Not Started"><td><span class="req-id">FR-005</span></td><td>Activate alarm when T &gt; 85 °C</td><td>SN-03</td><td>FR</td><td>AlarmManager module</td><td>Test</td><td>TC-005</td><td><span style="color:#c62828;font-weight:600">Not Started</span></td></tr>
+  <tr data-type="FR" data-status="Not Started"><td><span class="req-id">FR-006</span></td><td>Detect sensor fault within 1 s</td><td>SN-04</td><td>FR</td><td>SensorDriver module</td><td>Test</td><td>TC-006</td><td><span style="color:#c62828;font-weight:600">Not Started</span></td></tr>
+  <tr data-type="FR" data-status="Deferred"><td><span class="req-id">FR-007</span></td><td>Transmit data via UART every 1 s</td><td>SN-06</td><td>FR</td><td>CommModule</td><td>Test</td><td>TC-007</td><td><span style="color:#757575;font-weight:600">Deferred</span></td></tr>
+  <tr data-type="FR" data-status="Verified"><td><span class="req-id">FR-008</span></td><td>Initialize within 2 s of power-on</td><td>SN-05</td><td>FR</td><td>SystemInit module</td><td>Test</td><td>TC-008</td><td><span style="color:#2e7d32;font-weight:600">Verified</span></td></tr>
+  <tr data-type="NFR" data-status="In Progress"><td><span class="req-id">NFR-001</span></td><td>End-to-end response ≤ 500 ms</td><td>SN-02</td><td>NFR</td><td>FanController + SensorDriver</td><td>Test + Analysis</td><td>TC-003</td><td><span style="color:#f57c00;font-weight:600">In Progress</span></td></tr>
+  <tr data-type="NFR" data-status="Not Started"><td><span class="req-id">NFR-003</span></td><td>Idle current ≤ 50 mA</td><td>SN-05</td><td>NFR</td><td>Power Management</td><td>Measurement</td><td>TC-009</td><td><span style="color:#c62828;font-weight:600">Not Started</span></td></tr>
+  <tr data-type="HW" data-status="Verified"><td><span class="req-id">HW-001</span></td><td>Sensor range −10 to +125 °C, ±1 °C</td><td>SN-01</td><td>HW</td><td>Sensor component</td><td>Inspection (datasheet)</td><td>TC-010</td><td><span style="color:#2e7d32;font-weight:600">Verified</span></td></tr>
+  <tr data-type="HW" data-status="Verified"><td><span class="req-id">HW-004</span></td><td>Power supply 5 V ± 5%, ≥ 1 A</td><td>SN-05</td><td>HW</td><td>Power Supply unit</td><td>Inspection + Measurement</td><td>TC-011</td><td><span style="color:#2e7d32;font-weight:600">Verified</span></td></tr>
+  <tr data-type="SAF" data-status="Not Started"><td><span class="req-id">SAF-001</span></td><td>Fan ON at max speed in sensor-fault state</td><td>SN-04</td><td>SAF</td><td>FanController + FaultHandler</td><td>Test</td><td>TC-006</td><td><span style="color:#c62828;font-weight:600">Not Started</span></td></tr>
+  <tr data-type="SAF" data-status="Not Started"><td><span class="req-id">SAF-004</span></td><td>Self-test during initialization</td><td>SN-04</td><td>SAF</td><td>SystemInit module</td><td>Test</td><td>TC-008</td><td><span style="color:#c62828;font-weight:600">Not Started</span></td></tr>
+  <tr data-type="SW" data-status="Verified"><td><span class="req-id">SW-004</span></td><td>Watchdog timer, 1 s timeout</td><td>SN-05</td><td>SW</td><td>WatchdogDriver</td><td>Test</td><td>TC-012</td><td><span style="color:#2e7d32;font-weight:600">Verified</span></td></tr>
+</table>
+
+<div class="callout warn"><strong>Important:</strong> "Verified" status in this table indicates that a test case has been defined and the requirement has been reviewed. It does not imply that actual hardware testing has been completed. Actual test results must be recorded separately.</div>
+
+<h3>Traceability Concepts</h3>
+<div class="two-col">
+  <div class="callout success"><strong>Forward Traceability:</strong> From stakeholder need → requirement → design → code → test. Ensures every need is implemented and tested.</div>
+  <div class="callout"><strong>Backward Traceability:</strong> From test → code → design → requirement → stakeholder need. Ensures every design element and test has a justified requirement.</div>
+</div>
+<p><strong>How traceability helps:</strong></p>
+<ul>
+  <li><strong>Missing requirements:</strong> A design component with no linked requirement may be gold-plating or an undocumented need.</li>
+  <li><strong>Untested functionality:</strong> A requirement with no test case ID is a coverage gap.</li>
+  <li><strong>Change impact:</strong> Changing FR-003 (fan threshold) immediately shows which test cases (TC-003, TC-004) and design components (FanController) are affected.</li>
+</ul>
+</section>
+
+<!-- SECTION 10: V&V -->
+<section id="vv">
+<h2 class="sec-title">10. Requirements Verification &amp; Validation</h2>
+<div class="two-col">
+  <div class="callout success"><strong>Verification</strong> – "Are we building the system right?"<br>Checks that the system conforms to its specification. Methods: inspection, analysis, demonstration, testing.</div>
+  <div class="callout warn"><strong>Validation</strong> – "Are we building the right system?"<br>Checks that the system meets stakeholder needs. Methods: acceptance testing, user trials, prototyping.</div>
+</div>
+
+<h3>Verification Methods</h3>
+<table>
+  <tr><th>Method</th><th>Description</th><th>When Used</th><th>Embedded Example</th></tr>
+  <tr><td><strong>Inspection</strong></td><td>Visual review of documents, code, hardware</td><td>Requirements, design, code review</td><td>Checking sensor datasheet against HW-001</td></tr>
+  <tr><td><strong>Analysis</strong></td><td>Mathematical or logical evaluation</td><td>Timing, power, memory budgets</td><td>Calculating response-time budget for NFR-001</td></tr>
+  <tr><td><strong>Demonstration</strong></td><td>Showing the system performs a function</td><td>Functional behavior, UI</td><td>Demonstrating LCD display update to stakeholder</td></tr>
+  <tr><td><strong>Testing</strong></td><td>Executing the system with defined inputs and checking outputs</td><td>All functional and timing requirements</td><td>Measuring fan activation time with oscilloscope</td></tr>
+</table>
+
+<h3>Test Cases Derived from Requirements</h3>
+<table>
+  <tr><th>TC ID</th><th>Req ID</th><th>Preconditions</th><th>Input / Stimulus</th><th>Expected Result</th><th>Pass Criteria</th></tr>
+  <tr><td>TC-001</td><td>FR-001</td><td>System powered, sensor connected</td><td>Monitor system for 10 s</td><td>Temperature reading updated at least 50 times</td><td>≥ 50 readings in 10 s (≤ 200 ms interval)</td></tr>
+  <tr><td>TC-003</td><td>FR-003, NFR-001</td><td>System in Normal Monitoring state, T = 70 °C</td><td>Increase temperature to 76 °C</td><td>Fan activates within 500 ms of T crossing 75 °C</td><td>Fan ON signal measured ≤ 500 ms after threshold crossing (oscilloscope)</td></tr>
+  <tr><td>TC-004</td><td>FR-004</td><td>System in Cooling Active state, T = 76 °C</td><td>Decrease temperature to 69 °C, hold for 6 s</td><td>Fan deactivates after T &lt; 70 °C for 5 s</td><td>Fan OFF signal measured 5–6 s after T drops below 70 °C</td></tr>
+  <tr><td>TC-005</td><td>FR-005</td><td>System in Cooling Active state, T = 84 °C</td><td>Increase temperature to 86 °C</td><td>Audible alarm and critical LED activate within 500 ms</td><td>Both alarm and LED ON within 500 ms of threshold crossing</td></tr>
+  <tr><td>TC-006</td><td>FR-006, SAF-001</td><td>System in Normal Monitoring state</td><td>Disconnect temperature sensor</td><td>System enters Sensor Fault state within 1 s; fan activates at max speed</td><td>Fault state entered ≤ 1 s; fan at 100% duty cycle</td></tr>
+  <tr><td>TC-008</td><td>FR-008</td><td>System powered off</td><td>Apply 5 V DC power</td><td>System completes initialization and begins monitoring within 2 s</td><td>First valid temperature reading displayed within 2 s of power-on</td></tr>
+  <tr><td>TC-009</td><td>NFR-003</td><td>System in idle state (T &lt; 75 °C, no alarm)</td><td>Measure supply current with ammeter</td><td>Current ≤ 50 mA</td><td>Measured current ≤ 50 mA</td></tr>
+</table>
+
+<div class="callout warn"><strong>Expected vs. Actual Results:</strong> The "Expected Result" column describes what the system <em>should</em> do according to the requirement. The "Actual Result" column (not shown here — it belongs in the test report) records what the system <em>actually did</em> during testing. Never pre-fill actual results.</div>
+</section>
+
+<!-- SECTION 11: CHANGE MANAGEMENT -->
+<section id="change">
+<h2 class="sec-title">11. Requirements Change Management &amp; Risk Analysis</h2>
+<h3>Change Management Process</h3>
+<div class="flex-row">
+  <div class="card"><strong>1. Change Request</strong><br>Stakeholder submits a formal change request with justification.</div>
+  <div class="card"><strong>2. Impact Analysis</strong><br>Team assesses effect on requirements, design, firmware, hardware, tests, schedule, and cost.</div>
+  <div class="card"><strong>3. Approval (CCB)</strong><br>Change Control Board reviews and approves, rejects, or defers the change.</div>
+  <div class="card"><strong>4. Implementation</strong><br>Approved changes are implemented, SRS updated, and version incremented.</div>
+  <div class="card"><strong>5. Re-Verification</strong><br>Affected test cases are re-executed; RTM is updated.</div>
+</div>
+
+<h3>Scenario: Reducing Fan Response Time from 500 ms to 200 ms</h3>
+<div class="callout warn"><strong>Change Request CR-007:</strong> Customer requests fan activation time reduced from 500 ms to 200 ms to improve thermal protection.</div>
+<table>
+  <tr><th>Affected Item</th><th>Current State</th><th>Required Change</th><th>Impact</th></tr>
+  <tr><td>FR-003 (SRS)</td><td>Fan activates within 500 ms</td><td>Change to 200 ms</td><td>SRS update, version increment</td></tr>
+  <tr><td>TIM-001 (Sensor sampling)</td><td>≤ 200 ms interval</td><td>Reduce to ≤ 80 ms</td><td>Firmware change, higher MCU load</td></tr>
+  <tr><td>Firmware (FanController)</td><td>Polling every 200 ms</td><td>Polling every 80 ms</td><td>Increased CPU utilization (~2.5×)</td></tr>
+  <tr><td>MCU selection</td><td>Current MCU adequate</td><td>May need faster MCU or clock increase</td><td>Possible hardware change, cost impact</td></tr>
+  <tr><td>Power consumption</td><td>≤ 50 mA idle</td><td>Higher clock → higher current</td><td>NFR-003 may need revision</td></tr>
+  <tr><td>TC-003 (Test case)</td><td>Pass criterion: ≤ 500 ms</td><td>Change to ≤ 200 ms</td><td>Test case update, re-execution required</td></tr>
+  <tr><td>NFR-001</td><td>End-to-end ≤ 500 ms</td><td>Change to ≤ 200 ms</td><td>SRS update</td></tr>
+</table>
+
+<h3>Risk Table (Illustrative Ratings)</h3>
+<div class="callout">Probability and impact ratings below are illustrative examples for teaching purposes. Actual risk assessments require project-specific data.</div>
+<table>
+  <tr><th>Risk ID</th><th>Risk Description</th><th>Probability</th><th>Impact</th><th>Mitigation</th><th>Owner</th></tr>
+  <tr><td>R-001</td><td>Sensor fault not detected → overheating</td><td>Low</td><td>High</td><td>Implement SAF-001 fail-safe; add watchdog</td><td>Firmware Engineer</td></tr>
+  <tr><td>R-002</td><td>Fan response time exceeds 200 ms after change</td><td>Medium</td><td>High</td><td>Profile firmware; optimize sampling loop; consider DMA</td><td>Firmware Engineer</td></tr>
+  <tr><td>R-003</td><td>Power consumption exceeds 50 mA after clock increase</td><td>Medium</td><td>Medium</td><td>Measure current; use sleep modes; revise NFR-003 if needed</td><td>Hardware Engineer</td></tr>
+  <tr><td>R-004</td><td>Requirement changes not communicated to QA team</td><td>Medium</td><td>Medium</td><td>Mandatory CCB notification to all teams; RTM update</td><td>Project Manager</td></tr>
+  <tr><td>R-005</td><td>Incomplete requirements cause field failure</td><td>Low</td><td>Critical</td><td>Formal SRS review; traceability audit before release</td><td>QA Engineer</td></tr>
+</table>
+
+<h3>Key Concepts</h3>
+<ul>
+  <li><strong>Baseline:</strong> An approved, frozen version of the SRS used as a reference for change control.</li>
+  <li><strong>Version Control:</strong> SRS documents should be version-controlled (e.g., SRS v1.0, v1.1, v2.0).</li>
+  <li><strong>Configuration Management:</strong> Systematic tracking of all project artifacts and their versions.</li>
+  <li><strong>Dependency Analysis:</strong> Identifying which requirements depend on others before approving a change.</li>
+  <li><strong>Requirement Conflict:</strong> Two requirements that cannot both be satisfied simultaneously — must be resolved before implementation.</li>
+</ul>
+</section>
+
+<!-- SECTION 12: SOLVED EXAMPLES -->
+<section id="examples">
+<h2 class="sec-title">12. Solved Examples &amp; Numerical Problems</h2>
+
+<h3>Example 1: Requirement Improvement</h3>
+<div class="callout">Convert vague statements into measurable, testable requirements.</div>
+<table>
+  <tr><th>#</th><th>Vague Statement</th><th>Improved Requirement</th><th>Improvement Made</th></tr>
+  <tr><td>1</td><td>"The fan should turn on when it gets hot."</td><td>"The firmware shall activate the cooling fan within 500 ms of the temperature sensor reading exceeding 75 °C (illustrative threshold), under normal operating conditions."</td><td>Added trigger condition, response time, threshold value, operating conditions</td></tr>
+  <tr><td>2</td><td>"The system should be power efficient."</td><td>"The system idle current consumption shall not exceed 50 mA at 5 V DC supply voltage."</td><td>Added measurable metric, unit, and operating condition</td></tr>
+  <tr><td>3</td><td>"The display should show useful information."</td><td>"The LCD shall display the current temperature in °C, updated every 500 ms, with a resolution of 0.1 °C and a range of −10 °C to +125 °C."</td><td>Specified content, update rate, resolution, and range</td></tr>
+  <tr><td>4</td><td>"Handle errors properly."</td><td>"The firmware shall detect a sensor disconnection within 1 second, enter the Sensor Fault state, activate the cooling fan at 100% duty cycle, and display 'SENSOR FAULT' on the LCD."</td><td>Defined error type, detection time, system response, and display output</td></tr>
+</table>
+
+<h3>Example 2: Response-Time Budget Calculation</h3>
+<div class="callout">Calculate the end-to-end response time from temperature threshold crossing to fan activation.</div>
+<table>
+  <tr><th>Step</th><th>Activity</th><th>Time (Illustrative)</th></tr>
+  <tr><td>1</td><td>Sensor conversion time (e.g., DS18B20 at 12-bit resolution)</td><td>≤ 94 ms</td></tr>
+  <tr><td>2</td><td>MCU reads sensor data (I²C/1-Wire transaction)</td><td>≤ 5 ms</td></tr>
+  <tr><td>3</td><td>Firmware processes reading (threshold comparison, state update)</td><td>≤ 1 ms</td></tr>
+  <tr><td>4</td><td>GPIO output to fan driver circuit</td><td>≤ 1 ms</td></tr>
+  <tr><td>5</td><td>Fan driver relay/MOSFET switching time</td><td>≤ 5 ms</td></tr>
+  <tr><td><strong>Total (worst case)</strong></td><td></td><td><strong>≤ 106 ms</strong></td></tr>
+</table>
+<div class="callout success">
+  <strong>Result:</strong> The calculated worst-case response time is ≤ 106 ms, which satisfies the 500 ms requirement (FR-003) with significant margin. If the requirement were tightened to 200 ms, this budget still satisfies it. If tightened to 100 ms, the sensor conversion time would need to be reduced (e.g., by using 9-bit resolution: ≤ 94 ms → ≤ 94 ms still marginal; or by using a faster sensor).
+  <br><strong>Assumptions:</strong> Values are illustrative. Actual timing depends on specific component datasheets, MCU clock speed, and firmware implementation. All times are in milliseconds.
+</div>
+
+<h3>Example 3: Requirement Verification Coverage</h3>
+<div class="callout">Calculate the percentage of requirements that have been verified.</div>
+<p><strong>Formula:</strong></p>
+<div style="background:#e3f2fd;padding:12px 18px;border-radius:6px;font-family:monospace;font-size:1.05rem;margin:10px 0">
+  Coverage (%) = (Number of requirements verified / Total applicable requirements) × 100
+</div>
+<p><strong>Given (illustrative):</strong></p>
+<ul>
+  <li>Total applicable requirements in SRS: 20</li>
+  <li>Requirements with completed test cases and passing results: 12</li>
+  <li>Requirements deferred to next release: 2</li>
+  <li>Applicable requirements for current release: 20 − 2 = 18</li>
+</ul>
+<p><strong>Calculation:</strong></p>
+<div style="background:#e8f5e9;padding:12px 18px;border-radius:6px;font-family:monospace;font-size:1.05rem;margin:10px 0">
+  Coverage = (12 / 18) × 100 = <strong>66.7%</strong>
+</div>
+<div class="callout warn"><strong>Limitation:</strong> Coverage percentage alone does not prove the system is correct or safe. A requirement may "pass" a poorly designed test case. Coverage must be combined with test quality assessment, fault injection testing, and safety analysis to provide meaningful assurance.</div>
+
+<h3>GATE-Style Numerical Question</h3>
+<div class="quiz-q" style="background:#fff9c4">
+  <p><strong>Q:</strong> A temperature monitoring system has 25 functional requirements, 8 non-functional requirements, and 5 hardware requirements. During testing, 20 functional, 5 non-functional, and 4 hardware requirements have been verified. What is the overall requirement verification coverage?</p>
+  <p><strong>Solution:</strong></p>
+  <ul>
+    <li>Total requirements = 25 + 8 + 5 = 38</li>
+    <li>Verified requirements = 20 + 5 + 4 = 29</li>
+    <li>Coverage = (29 / 38) × 100 = <strong>76.3%</strong></li>
+  </ul>
+  <p>Answer: <strong>76.3%</strong> (approximately 76%)</p>
+</div>
+
+<h3>Scenario-Based Question</h3>
+<div class="quiz-q" style="background:#f3e5f5">
+  <p><strong>Q:</strong> A firmware engineer changes the sensor sampling interval from 200 ms to 80 ms to meet a new 200 ms fan response time requirement. List three other items in the project that must be reviewed and potentially updated.</p>
+  <p><strong>Answer:</strong></p>
+  <ol>
+    <li><strong>Power consumption (NFR-003):</strong> Higher sampling rate increases MCU active time and current draw — the 50 mA idle limit may be violated.</li>
+    <li><strong>Test cases (TC-001, TC-003):</strong> TC-001 pass criterion (≥ 50 readings in 10 s) must be updated to ≥ 125 readings in 10 s; TC-003 pass criterion changes from ≤ 500 ms to ≤ 200 ms.</li>
+    <li><strong>MCU workload analysis:</strong> Increased sampling frequency may affect other firmware tasks — a CPU utilization analysis is required to ensure no task deadlines are missed.</li>
+  </ol>
+</div>
+</section>
+
+<!-- SECTION 13: GATE PREP -->
+<section id="gate">
+<h2 class="sec-title">13. GATE &amp; Examination Preparation</h2>
+<div class="callout">The following questions are original practice questions created for examination preparation. They are not actual previous-year GATE questions.</div>
+
+<div id="gate-quiz">
+
+<div class="quiz-q" id="gq1">
+  <p><strong>Q1.</strong> <span class="diff-easy">[Easy]</span> Which of the following best describes a functional requirement?</p>
+  <label><input type="radio" name="gq1" value="a"> A. The system shall consume less than 50 mA in idle mode.</label>
+  <label><input type="radio" name="gq1" value="b"> B. The system shall activate the cooling fan when temperature exceeds 75 °C.</label>
+  <label><input type="radio" name="gq1" value="c"> C. The system shall have a Mean Time Between Failures of 10,000 hours.</label>
+  <label><input type="radio" name="gq1" value="d"> D. The firmware shall occupy no more than 80% of flash memory.</label>
+  <div class="quiz-feedback" id="gq1-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq2">
+  <p><strong>Q2.</strong> <span class="diff-easy">[Easy]</span> In the MoSCoW prioritization method, which category represents requirements that are critical and the system cannot function without them?</p>
+  <label><input type="radio" name="gq2" value="a"> A. Should Have</label>
+  <label><input type="radio" name="gq2" value="b"> B. Could Have</label>
+  <label><input type="radio" name="gq2" value="c"> C. Must Have</label>
+  <label><input type="radio" name="gq2" value="d"> D. Won't Have</label>
+  <div class="quiz-feedback" id="gq2-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq3">
+  <p><strong>Q3.</strong> <span class="diff-mod">[Moderate]</span> A requirement states: "The system should be reliable." What is the primary problem with this requirement?</p>
+  <label><input type="radio" name="gq3" value="a"> A. It is not functional.</label>
+  <label><input type="radio" name="gq3" value="b"> B. It is not traceable to a stakeholder.</label>
+  <label><input type="radio" name="gq3" value="c"> C. It is not verifiable — no measurable metric is defined.</label>
+  <label><input type="radio" name="gq3" value="d"> D. It is a hardware requirement, not a software requirement.</label>
+  <div class="quiz-feedback" id="gq3-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq4">
+  <p><strong>Q4.</strong> <span class="diff-mod">[Moderate]</span> What is the primary purpose of a Requirement Traceability Matrix (RTM)?</p>
+  <label><input type="radio" name="gq4" value="a"> A. To document the system architecture.</label>
+  <label><input type="radio" name="gq4" value="b"> B. To link requirements to their source, design components, and test cases.</label>
+  <label><input type="radio" name="gq4" value="c"> C. To estimate project cost and schedule.</label>
+  <label><input type="radio" name="gq4" value="d"> D. To define the communication protocol between hardware modules.</label>
+  <div class="quiz-feedback" id="gq4-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq5">
+  <p><strong>Q5.</strong> <span class="diff-mod">[Moderate]</span> Which verification method is most appropriate for checking that the system's power supply meets the 5 V ± 5% requirement?</p>
+  <label><input type="radio" name="gq5" value="a"> A. Inspection of the SRS document</label>
+  <label><input type="radio" name="gq5" value="b"> B. Demonstration to the customer</label>
+  <label><input type="radio" name="gq5" value="c"> C. Measurement with a calibrated voltmeter</label>
+  <label><input type="radio" name="gq5" value="d"> D. Brainstorming session with the design team</label>
+  <div class="quiz-feedback" id="gq5-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq6">
+  <p><strong>Q6.</strong> <span class="diff-mod">[Moderate]</span> The difference between verification and validation in requirements engineering is:</p>
+  <label><input type="radio" name="gq6" value="a"> A. Verification checks stakeholder satisfaction; validation checks specification conformance.</label>
+  <label><input type="radio" name="gq6" value="b"> B. Verification checks specification conformance ("built it right"); validation checks stakeholder needs ("built the right thing").</label>
+  <label><input type="radio" name="gq6" value="c"> C. Verification is performed by customers; validation is performed by engineers.</label>
+  <label><input type="radio" name="gq6" value="d"> D. Verification and validation are the same activity performed at different project phases.</label>
+  <div class="quiz-feedback" id="gq6-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq7">
+  <p><strong>Q7.</strong> <span class="diff-hard">[Difficult]</span> A temperature monitoring system has a sensor sampling interval of 150 ms, firmware processing time of 2 ms, and fan driver switching time of 8 ms. What is the maximum possible end-to-end response time from threshold crossing to fan activation?</p>
+  <label><input type="radio" name="gq7" value="a"> A. 150 ms</label>
+  <label><input type="radio" name="gq7" value="b"> B. 152 ms</label>
+  <label><input type="radio" name="gq7" value="c"> C. 160 ms</label>
+  <label><input type="radio" name="gq7" value="d"> D. 8 ms</label>
+  <div class="quiz-feedback" id="gq7-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq8">
+  <p><strong>Q8.</strong> <span class="diff-mod">[Moderate]</span> Which elicitation technique is most effective for discovering tacit knowledge — requirements that users know but cannot easily articulate?</p>
+  <label><input type="radio" name="gq8" value="a"> A. Questionnaire</label>
+  <label><input type="radio" name="gq8" value="b"> B. Document analysis</label>
+  <label><input type="radio" name="gq8" value="c"> C. Observation</label>
+  <label><input type="radio" name="gq8" value="d"> D. Brainstorming</label>
+  <div class="quiz-feedback" id="gq8-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq9">
+  <p><strong>Q9.</strong> <span class="diff-hard">[Difficult]</span> A project has 40 requirements. After testing, 30 requirements have been verified. Two requirements were deferred to the next release. What is the verification coverage for the current release?</p>
+  <label><input type="radio" name="gq9" value="a"> A. 75.0%</label>
+  <label><input type="radio" name="gq9" value="b"> B. 78.9%</label>
+  <label><input type="radio" name="gq9" value="c"> C. 76.9%</label>
+  <label><input type="radio" name="gq9" value="d"> D. 80.0%</label>
+  <div class="quiz-feedback" id="gq9-fb"></div>
+</div>
+
+<div class="quiz-q" id="gq10">
+  <p><strong>Q10.</strong> <span class="diff-mod">[Moderate]</span> In embedded systems, a "fail-safe" requirement means:</p>
+  <label><input type="radio" name="gq10" value="a"> A. The system never fails under any condition.</label>
+  <label><input type="radio" name="gq10" value="b"> B. The system transitions to a safe, predefined state when a fault is detected.</label>
+  <label><input type="radio" name="gq10" value="c"> C. The system automatically repairs itself after a failure.</label>
+  <label><input type="radio" name="gq10" value="d"> D. The system shuts down immediately when any error occurs.</label>
+  <div class="quiz-feedback" id="gq10-fb"></div>
+</div>
+
+<div style="margin-top:16px">
+  <button class="btn btn-primary" onclick="checkGateQuiz()">Check Answers</button>
+  &nbsp;
+  <button class="btn btn-warn" onclick="resetGateQuiz()">Reset Quiz</button>
+</div>
+<div class="score-box" id="gate-score"></div>
+</div>
+</section>
+
+<!-- SECTION 14: INTERVIEW PREP -->
+<section id="interview">
+<h2 class="sec-title">14. Embedded Systems Interview Preparation</h2>
+<div class="callout">Expand each question to see a concise answer suitable for embedded software, firmware, automotive, IoT, and semiconductor company interviews.</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q1: What is requirements engineering and why is it important in embedded systems? <span>▶</span></div>
+  <div class="iq-body">
+    <p>Requirements engineering is the systematic process of eliciting, analyzing, specifying, validating, and managing the needs and constraints that a system must satisfy. In embedded systems, it is critical because: (1) hardware and software are tightly coupled — a missed requirement can require costly PCB redesign; (2) real-time constraints must be precisely defined to ensure correct behavior; (3) safety-critical systems require traceable, verifiable requirements for certification; (4) fixing a defect found in the field costs orders of magnitude more than fixing it during requirements.</p>
+    <p><strong>Follow-up:</strong> "Can you give an example of a requirement that, if missed, could cause a field failure?" → Missing a sensor fault detection requirement could cause a cooling system to fail silently, leading to equipment overheating.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q2: What is the difference between functional and non-functional requirements? <span>▶</span></div>
+  <div class="iq-body">
+    <p>Functional requirements describe <em>what</em> the system does — its behaviors, inputs, outputs, and functions. Example: "The system shall activate the fan when temperature exceeds 75 °C." Non-functional requirements describe <em>how well</em> the system performs — quality attributes and constraints. Example: "The fan shall activate within 500 ms." Both are equally important; missing NFRs often cause performance, safety, or reliability failures in the field.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q3: What makes an embedded requirement testable? <span>▶</span></div>
+  <div class="iq-body">
+    <p>A testable requirement must have: (1) a clear trigger or precondition; (2) a measurable expected outcome with units; (3) defined operating conditions; (4) a feasible verification method. Example: "The firmware shall activate the fan within 500 ms (±50 ms) of the temperature exceeding 75 °C, measured from threshold crossing to fan GPIO signal assertion, under nominal supply voltage and 25 °C ambient." This can be verified with an oscilloscope and a temperature source.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q4: What is an SRS and what should it contain? <span>▶</span></div>
+  <div class="iq-body">
+    <p>An SRS (Software Requirements Specification) is the primary document that formally describes all requirements for a system. It should contain: system overview and scope, stakeholder identification, functional requirements (with unique IDs), non-functional requirements, hardware requirements, interface requirements, timing and performance constraints, safety and security requirements, environmental constraints, assumptions and dependencies, and acceptance criteria. Each requirement should be uniquely identified, unambiguous, and verifiable.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q5: What is a Requirement Traceability Matrix and how do you use it? <span>▶</span></div>
+  <div class="iq-body">
+    <p>An RTM is a table that links each requirement to its source (stakeholder need), design component, implementation artifact, test case, and verification status. Forward traceability (need → test) ensures every requirement is implemented and tested. Backward traceability (test → need) ensures every design element has a justified requirement. I use the RTM to identify coverage gaps (requirements without test cases), gold-plating (design elements without requirements), and to perform impact analysis when a requirement changes.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q6: How are real-time constraints specified in embedded requirements? <span>▶</span></div>
+  <div class="iq-body">
+    <p>Real-time constraints are specified as timing requirements with: (1) a trigger event (e.g., temperature threshold crossing); (2) a deadline (e.g., ≤ 500 ms); (3) operating conditions (e.g., nominal supply, specified temperature range); (4) a verification method (e.g., oscilloscope measurement). The timing budget should be broken down into components (sensor conversion, firmware processing, actuator switching) to verify feasibility during design. Worst-case execution time (WCET) analysis is used for hard real-time systems.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q7: What is the difference between verification and validation? <span>▶</span></div>
+  <div class="iq-body">
+    <p>Verification asks "Are we building the system right?" — it checks that the system conforms to its specification. Methods include inspection, analysis, demonstration, and testing. Validation asks "Are we building the right system?" — it checks that the system meets actual stakeholder needs. Methods include acceptance testing, user trials, and prototyping. A system can pass verification (meets the SRS) but fail validation (the SRS didn't capture the real need). Both are necessary.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q8: How do you manage changing requirements in an embedded project? <span>▶</span></div>
+  <div class="iq-body">
+    <p>I follow a formal change management process: (1) the change is submitted as a Change Request with justification; (2) impact analysis is performed — which requirements, design components, firmware modules, test cases, and schedule items are affected; (3) the Change Control Board reviews and approves/rejects/defers; (4) approved changes are implemented, the SRS is updated with a new version number, and affected test cases are re-executed; (5) the RTM is updated. Uncontrolled changes are the leading cause of scope creep and integration failures.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q9: How do you handle conflicting stakeholder requirements? <span>▶</span></div>
+  <div class="iq-body">
+    <p>I first document both positions explicitly. Then I try to understand the underlying need behind each position — often the conflict is about proposed solutions, not actual goals. I prioritize by safety and business impact (safety requirements always take precedence). I facilitate a negotiation session to find a compromise (e.g., configurable thresholds). If consensus cannot be reached, I escalate to a decision authority. The final decision and its rationale are documented in the SRS.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q10: How do incomplete requirements cause field failures? <span>▶</span></div>
+  <div class="iq-body">
+    <p>Incomplete requirements leave gaps that engineers fill with assumptions — which may be wrong. Examples: (1) No sensor fault requirement → firmware has no fault detection → system silently fails when sensor disconnects → equipment overheats; (2) No power-on initialization requirement → system starts in an undefined state → intermittent failures in the field; (3) No environmental requirement → system tested at 25 °C but deployed at 50 °C → timing violations and component failures. Thorough elicitation, formal reviews, and traceability audits reduce this risk.</p>
+  </div>
+</div>
+
+<div class="interview-q">
+  <div class="iq-head" onclick="toggleIQ(this)">Q11: How do safety-related requirements differ from regular requirements? <span>▶</span></div>
+  <div class="iq-body">
+    <p>Safety requirements define fail-safe behavior, fault detection, and system response to hazardous conditions. They are typically: (1) assigned the highest priority (Must Have); (2) subject to more rigorous verification (e.g., fault injection testing); (3) documented with explicit rationale and hazard references; (4) reviewed by a safety engineer; (5) potentially subject to applicable safety standards (e.g., IEC 61508 for functional safety — only when required by the project). Example: SAF-001 requires the fan to activate at maximum speed if the sensor fails, preventing overheating even when the primary control path is unavailable.</p>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 15: INDUSTRY -->
+<section id="industry">
+<h2 class="sec-title">15. Applications &amp; Industry Relevance</h2>
+<table>
+  <tr><th>Industry</th><th>RE Application</th><th>Key Challenges</th></tr>
+  <tr><td><strong>Automotive</strong></td><td>AUTOSAR-based ECU requirements, ADAS sensor fusion, CAN/LIN interface specs</td><td>Functional safety (ISO 26262 context), real-time deadlines, multi-supplier integration</td></tr>
+  <tr><td><strong>Medical Devices</strong></td><td>Patient monitoring, drug delivery, diagnostic equipment requirements</td><td>Regulatory requirements, traceability for audits, safety-critical behavior</td></tr>
+  <tr><td><strong>Industrial Automation</strong></td><td>PLC programming specs, SCADA interface requirements, sensor integration</td><td>Harsh environments, legacy system integration, 24/7 availability</td></tr>
+  <tr><td><strong>IoT Devices</strong></td><td>Sensor data requirements, cloud connectivity, OTA update specs</td><td>Power constraints, security requirements, diverse deployment environments</td></tr>
+  <tr><td><strong>Consumer Electronics</strong></td><td>Feature specifications, UI requirements, power management</td><td>Short development cycles, cost pressure, diverse user expectations</td></tr>
+  <tr><td><strong>Aerospace &amp; Defense</strong></td><td>Flight control requirements, communication protocol specs, redundancy requirements</td><td>Extreme reliability requirements, certification processes, long product lifetimes</td></tr>
+  <tr><td><strong>Robotics</strong></td><td>Motion control requirements, sensor fusion specs, safety stop requirements</td><td>Real-time control, human-robot interaction safety, complex state machines</td></tr>
+  <tr><td><strong>Smart Energy</strong></td><td>Smart meter requirements, grid interface specs, demand response requirements</td><td>Communication security, metering accuracy, regulatory compliance</td></tr>
+</table>
+
+<h3>How RE Supports the Development Lifecycle</h3>
+<ul>
+  <li><strong>Firmware Development:</strong> Requirements define control logic, timing, interfaces, and error handling — the firmware engineer's primary specification.</li>
+  <li><strong>Hardware Design:</strong> Hardware requirements define component selection, electrical specs, and PCB constraints.</li>
+  <li><strong>System Integration:</strong> Interface requirements define how hardware and software components communicate.</li>
+  <li><strong>Quality Assurance:</strong> Test cases are derived directly from requirements; the RTM tracks coverage.</li>
+  <li><strong>Product Maintenance:</strong> Traceable requirements enable safe modification of fielded products.</li>
+</ul>
+</section>
+
+<!-- SECTION 16: INTERACTIVE QUIZ -->
+<section id="quiz">
+<h2 class="sec-title">16. Interactive Topic Quiz</h2>
+<div class="callout">Select your answers and click <strong>Check Answers</strong>. You can change answers and retry using <strong>Reset Quiz</strong>.</div>
+
+<div id="main-quiz">
+
+<div class="quiz-q" id="mq1">
+  <p><strong>1.</strong> Which document formally captures all system requirements and serves as the primary contract between stakeholders and the development team?</p>
+  <label><input type="radio" name="mq1" value="a"> A. RTM (Requirement Traceability Matrix)</label>
+  <label><input type="radio" name="mq1" value="b"> B. SRS (Software Requirements Specification)</label>
+  <label><input type="radio" name="mq1" value="c"> C. UML State Diagram</label>
+  <label><input type="radio" name="mq1" value="d"> D. Change Request Form</label>
+  <div class="quiz-feedback" id="mq1-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq2">
+  <p><strong>2.</strong> "The system shall consume less than 50 mA in idle mode" is an example of:</p>
+  <label><input type="radio" name="mq2" value="a"> A. Functional requirement</label>
+  <label><input type="radio" name="mq2" value="b"> B. Interface requirement</label>
+  <label><input type="radio" name="mq2" value="c"> C. Non-functional requirement</label>
+  <label><input type="radio" name="mq2" value="d"> D. Safety requirement</label>
+  <div class="quiz-feedback" id="mq2-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq3">
+  <p><strong>3.</strong> In the state-machine diagram for the temperature monitoring system, what action is taken in the SENSOR FAULT state?</p>
+  <label><input type="radio" name="mq3" value="a"> A. System shuts down completely</label>
+  <label><input type="radio" name="mq3" value="b"> B. Fan is deactivated to save power</label>
+  <label><input type="radio" name="mq3" value="c"> C. Fan is activated at maximum speed as a fail-safe</label>
+  <label><input type="radio" name="mq3" value="d"> D. System waits for operator input before taking action</label>
+  <div class="quiz-feedback" id="mq3-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq4">
+  <p><strong>4.</strong> Which elicitation technique involves watching users interact with an existing system to discover requirements they cannot easily articulate?</p>
+  <label><input type="radio" name="mq4" value="a"> A. Brainstorming</label>
+  <label><input type="radio" name="mq4" value="b"> B. Questionnaire</label>
+  <label><input type="radio" name="mq4" value="c"> C. Observation</label>
+  <label><input type="radio" name="mq4" value="d"> D. Document analysis</label>
+  <div class="quiz-feedback" id="mq4-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq5">
+  <p><strong>5.</strong> Forward traceability in an RTM means:</p>
+  <label><input type="radio" name="mq5" value="a"> A. Tracing from test results back to stakeholder needs</label>
+  <label><input type="radio" name="mq5" value="b"> B. Tracing from stakeholder needs forward to requirements, design, and tests</label>
+  <label><input type="radio" name="mq5" value="c"> C. Tracing from hardware components to firmware modules</label>
+  <label><input type="radio" name="mq5" value="d"> D. Tracing from change requests to approved requirements</label>
+  <div class="quiz-feedback" id="mq5-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq6">
+  <p><strong>6.</strong> A requirement states: "The fan and the alarm shall both activate when temperature is high." What quality problem does this requirement have?</p>
+  <label><input type="radio" name="mq6" value="a"> A. It is not traceable</label>
+  <label><input type="radio" name="mq6" value="b"> B. It is not atomic — it contains two requirements in one statement</label>
+  <label><input type="radio" name="mq6" value="c"> C. It is a hardware requirement, not a software requirement</label>
+  <label><input type="radio" name="mq6" value="d"> D. It is not feasible</label>
+  <div class="quiz-feedback" id="mq6-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq7">
+  <p><strong>7.</strong> Which verification method is most appropriate for confirming that the fan activates within 500 ms of a temperature threshold crossing?</p>
+  <label><input type="radio" name="mq7" value="a"> A. Inspection of the SRS</label>
+  <label><input type="radio" name="mq7" value="b"> B. Stakeholder walkthrough</label>
+  <label><input type="radio" name="mq7" value="c"> C. Timed test with oscilloscope measurement</label>
+  <label><input type="radio" name="mq7" value="d"> D. Brainstorming session</label>
+  <div class="quiz-feedback" id="mq7-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq8">
+  <p><strong>8.</strong> In MoSCoW prioritization, "Should Have" requirements are:</p>
+  <label><input type="radio" name="mq8" value="a"> A. Critical — the system cannot function without them</label>
+  <label><input type="radio" name="mq8" value="b"> B. Important but not critical for the first release</label>
+  <label><input type="radio" name="mq8" value="c"> C. Desirable if time and budget allow</label>
+  <label><input type="radio" name="mq8" value="d"> D. Explicitly excluded from the current scope</label>
+  <div class="quiz-feedback" id="mq8-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq9">
+  <p><strong>9.</strong> What is the primary risk of not performing impact analysis before implementing a requirement change?</p>
+  <label><input type="radio" name="mq9" value="a"> A. The SRS document becomes too long</label>
+  <label><input type="radio" name="mq9" value="b"> B. Cascading failures in dependent requirements, design, firmware, and test cases may be missed</label>
+  <label><input type="radio" name="mq9" value="c"> C. The change request form is not filled correctly</label>
+  <label><input type="radio" name="mq9" value="d"> D. The RTM becomes unreadable</label>
+  <div class="quiz-feedback" id="mq9-fb"></div>
+</div>
+
+<div class="quiz-q" id="mq10">
+  <p><strong>10.</strong> A project has 50 requirements. 35 have been verified, and 5 are deferred. What is the verification coverage for the current release?</p>
+  <label><input type="radio" name="mq10" value="a"> A. 70.0%</label>
+  <label><input type="radio" name="mq10" value="b"> B. 77.8%</label>
+  <label><input type="radio" name="mq10" value="c"> C. 75.0%</label>
+  <label><input type="radio" name="mq10" value="d"> D. 80.0%</label>
+  <div class="quiz-feedback" id="mq10-fb"></div>
+</div>
+
+<div style="margin-top:16px">
+  <button class="btn btn-primary" onclick="checkMainQuiz()">Check Answers</button>
+  &nbsp;
+  <button class="btn btn-warn" onclick="resetMainQuiz()">Reset Quiz</button>
+</div>
+<div class="score-box" id="main-score"></div>
+</div>
+</section>
+
+<!-- SECTION 17: REVISION -->
+<section id="revision">
+<h2 class="sec-title">17. Quick Revision Sheet</h2>
+
+<h3>Requirements Engineering Process Summary</h3>
+<ol>
+  <li><strong>Elicitation</strong> → Gather stakeholder needs (interviews, observation, workshops)</li>
+  <li><strong>Analysis</strong> → Resolve conflicts, model behavior, check feasibility</li>
+  <li><strong>Specification</strong> → Write SRS with unique IDs, clear language, acceptance criteria</li>
+  <li><strong>Validation</strong> → Confirm requirements match stakeholder needs</li>
+  <li><strong>Verification</strong> → Confirm requirements are correct, complete, consistent, testable</li>
+  <li><strong>Prioritization</strong> → MoSCoW ranking</li>
+  <li><strong>Management</strong> → Track status, control changes, maintain versions</li>
+  <li><strong>Traceability</strong> → RTM linking need → requirement → design → test</li>
+</ol>
+
+<h3>Key Comparison Tables</h3>
+<div class="two-col">
+<table>
+  <tr><th colspan="2">Functional vs. Non-Functional</th></tr>
+  <tr><td>FR: <em>What</em> the system does</td><td>NFR: <em>How well</em> it does it</td></tr>
+  <tr><td>Fan activates at 75 °C</td><td>Fan activates within 500 ms</td></tr>
+  <tr><td>Tested by pass/fail</td><td>Measured against a metric</td></tr>
+</table>
+<table>
+  <tr><th colspan="2">Verification vs. Validation</th></tr>
+  <tr><td>Verification: "Built it right?"</td><td>Validation: "Built the right thing?"</td></tr>
+  <tr><td>Checks specification conformance</td><td>Checks stakeholder satisfaction</td></tr>
+  <tr><td>Inspection, analysis, test</td><td>Acceptance test, user trial</td></tr>
+</table>
+</div>
+
+<h3>SRS Checklist</h3>
+<ul class="checklist">
+  <li>Every requirement has a unique ID</li>
+  <li>Every requirement is testable (has a measurable criterion)</li>
+  <li>No requirement contains "and" joining two separate requirements</li>
+  <li>No vague terms: "fast", "reliable", "usually", "appropriate"</li>
+  <li>All requirements are traceable to a stakeholder need</li>
+  <li>Safety requirements are identified and have fail-safe behavior defined</li>
+  <li>Timing requirements include trigger, deadline, and operating conditions</li>
+  <li>Assumptions and dependencies are documented</li>
+  <li>Acceptance criteria are defined for all Must Have requirements</li>
+</ul>
+
+<h3>Key Formulas</h3>
+<table>
+  <tr><th>Metric</th><th>Formula</th></tr>
+  <tr><td>Verification Coverage</td><td>Coverage (%) = (Verified requirements / Applicable requirements) × 100</td></tr>
+  <tr><td>Response-Time Budget</td><td>T_total = T_sensor + T_comm + T_firmware + T_actuator</td></tr>
+  <tr><td>Risk Score (illustrative)</td><td>Risk = Probability × Impact (qualitative or quantitative scale)</td></tr>
+</table>
+
+<h3>Common Examination Mistakes</h3>
+<ul>
+  <li>Confusing verification ("built it right") with validation ("built the right thing")</li>
+  <li>Classifying power consumption as a functional requirement (it is non-functional)</li>
+  <li>Writing non-atomic requirements (multiple requirements in one statement)</li>
+  <li>Forgetting that NFRs must be measurable to be verifiable</li>
+  <li>Confusing MoSCoW "Must Have" with "high priority" — Must Have means the system fails without it</li>
+  <li>Assuming 100% coverage means the system is correct — test quality matters</li>
+  <li>Forgetting that RE is iterative, not a one-time phase</li>
+</ul>
+
+<h3>Compact Glossary</h3>
+<div class="glossary-grid">
+  <div class="glossary-item"><strong>Atomic</strong> – One requirement per statement</div>
+  <div class="glossary-item"><strong>Baseline</strong> – Approved, frozen requirement version</div>
+  <div class="glossary-item"><strong>CCB</strong> – Change Control Board</div>
+  <div class="glossary-item"><strong>Elicitation</strong> – Gathering stakeholder needs</div>
+  <div class="glossary-item"><strong>Fail-safe</strong> – Safe state on fault detection</div>
+  <div class="glossary-item"><strong>FR</strong> – Functional Requirement</div>
+  <div class="glossary-item"><strong>Hysteresis</strong> – Different on/off thresholds to prevent cycling</div>
+  <div class="glossary-item"><strong>MTBF</strong> – Mean Time Between Failures</div>
+  <div class="glossary-item"><strong>MoSCoW</strong> – Must/Should/Could/Won't prioritization</div>
+  <div class="glossary-item"><strong>NFR</strong> – Non-Functional Requirement</div>
+  <div class="glossary-item"><strong>RTM</strong> – Requirement Traceability Matrix</div>
+  <div class="glossary-item"><strong>SRS</strong> – Software Requirements Specification</div>
+  <div class="glossary-item"><strong>Traceability</strong> – Linking need → req → design → test</div>
+  <div class="glossary-item"><strong>Validation</strong> – Right system for stakeholder needs</div>
+  <div class="glossary-item"><strong>Verification</strong> – System meets its specification</div>
+  <div class="glossary-item"><strong>WCET</strong> – Worst-Case Execution Time</div>
+</div>
+
+<div style="margin-top:20px;text-align:center">
+  <button class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+</div>
+</section>
+
+</div><!-- end container -->
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+// Collapsible sections
+function toggleColl(btn){
+  btn.classList.toggle('open');
+  var c=btn.nextElementSibling;
+  c.classList.toggle('show');
+}
+
+// Interview Q toggle
+function toggleIQ(head){
+  var body=head.nextElementSibling;
+  body.classList.toggle('show');
+  head.querySelector('span').textContent=body.classList.contains('show')?'▼':'▶';
+}
+
+// Back to top
+window.addEventListener('scroll',function(){
+  document.getElementById('back-top').classList.toggle('show',window.scrollY>300);
+});
+
+// Nav highlight
+var navLinks=document.querySelectorAll('nav a');
+var sections=document.querySelectorAll('section[id]');
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+80;
+  sections.forEach(function(s){
+    if(pos>=s.offsetTop&&pos<s.offsetTop+s.offsetHeight){
+      navLinks.forEach(function(a){a.classList.remove('active')});
+      var l=document.querySelector('nav a[href="#'+s.id+'"]');
+      if(l)l.classList.add('active');
+    }
+  });
+});
+
+// RTM filter
+function filterRTM(){
+  var st=document.getElementById('rtm-status').value;
+  var ty=document.getElementById('rtm-type').value;
+  var rows=document.querySelectorAll('#rtm-table tr[data-type]');
+  rows.forEach(function(r){
+    var showSt=st==='all'||r.dataset.status===st;
+    var showTy=ty==='all'||r.dataset.type===ty;
+    r.style.display=(showSt&&showTy)?'':'none';
+  });
+}
+
+// GATE Quiz
+var gateAnswers={gq1:'b',gq2:'c',gq3:'c',gq4:'b',gq5:'c',gq6:'b',gq7:'c',gq8:'c',gq9:'b',gq10:'b'};
+var gateExplanations={
+  gq1:'B is correct. Functional requirements describe what the system does — a specific behavior or function. A, C, D are non-functional (power, reliability, memory constraints).',
+  gq2:'C is correct. "Must Have" in MoSCoW means the system cannot function without this requirement — it is critical.',
+  gq3:'C is correct. "Reliable" has no measurable metric, making it impossible to test. A good requirement must be verifiable.',
+  gq4:'B is correct. The RTM\'s primary purpose is to link requirements to their source, design, and tests — enabling traceability and coverage analysis.',
+  gq5:'C is correct. A voltage specification must be verified by measurement with a calibrated instrument, not by document review or demonstration.',
+  gq6:'B is correct. Verification checks specification conformance ("built it right"); validation checks stakeholder needs ("built the right thing").',
+  gq7:'C is correct. Maximum response time = sampling interval + processing + switching = 150 + 2 + 8 = 160 ms. The threshold crossing could occur just after a sample, so the next sample is taken 150 ms later, then 2 ms processing + 8 ms switching = 160 ms total.',
+  gq8:'C is correct. Observation reveals tacit knowledge — things users do automatically without being able to articulate them. Questionnaires and document analysis cannot capture this.',
+  gq9:'B is correct. Applicable requirements = 40 − 2 = 38. Coverage = 30/38 × 100 = 78.9%.',
+  gq10:'B is correct. A fail-safe requirement means the system transitions to a predefined safe state (e.g., fan ON) when a fault is detected — not that it never fails or shuts down.'
+};
+
+function checkGateQuiz(){
+  var score=0;
+  Object.keys(gateAnswers).forEach(function(q){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    var fb=document.getElementById(q+'-fb');
+    var labels=document.querySelectorAll('#'+q+' label');
+    labels.forEach(function(l){l.className='';});
+    fb.className='quiz-feedback show';
+    if(sel){
+      var correct=gateAnswers[q];
+      labels.forEach(function(l){
+        var v=l.querySelector('input').value;
+        if(v===correct)l.className='correct';
+        else if(v===sel.value&&v!==correct)l.className='wrong';
+      });
+      if(sel.value===correct){score++;fb.style.background='#c8e6c9';fb.style.color='#1b5e20';}
+      else{fb.style.background='#ffcdd2';fb.style.color='#b71c1c';}
+    } else {
+      var correct=gateAnswers[q];
+      labels.forEach(function(l){if(l.querySelector('input').value===correct)l.className='missed';});
+      fb.style.background='#fff9c4';fb.style.color='#f57f17';
+    }
+    fb.textContent=gateExplanations[q];
+  });
+  var sb=document.getElementById('gate-score');
+  sb.className='score-box show';
+  sb.innerHTML='Score: '+score+' / 10 &nbsp;|&nbsp; '+score*10+'%<br><small>'+(score>=8?'Excellent!':score>=6?'Good — review incorrect answers.':'Keep practicing — review the relevant sections.')+'</small>';
+}
+
+function resetGateQuiz(){
+  Object.keys(gateAnswers).forEach(function(q){
+    document.querySelectorAll('input[name="'+q+'"]').forEach(function(r){r.checked=false;});
+    var fb=document.getElementById(q+'-fb');
+    fb.className='quiz-feedback';fb.textContent='';
+    document.querySelectorAll('#'+q+' label').forEach(function(l){l.className='';});
+  });
+  var sb=document.getElementById('gate-score');
+  sb.className='score-box';sb.innerHTML='';
+}
+
+// Main Quiz
+var mainAnswers={mq1:'b',mq2:'c',mq3:'c',mq4:'c',mq5:'b',mq6:'b',mq7:'c',mq8:'b',mq9:'b',mq10:'b'};
+var mainExplanations={
+  mq1:'B is correct. The SRS (Software Requirements Specification) is the formal document that captures all requirements and serves as the primary contract between stakeholders and the development team.',
+  mq2:'C is correct. Power consumption (50 mA limit) is a non-functional requirement — it describes a quality constraint, not a system behavior.',
+  mq3:'C is correct. SAF-001 requires the fan to activate at maximum speed in the Sensor Fault state as a fail-safe measure to prevent overheating when the sensor is unavailable.',
+  mq4:'C is correct. Observation reveals tacit knowledge — behaviors and needs that users perform automatically but cannot easily describe in interviews or questionnaires.',
+  mq5:'B is correct. Forward traceability traces from stakeholder needs forward through requirements, design components, code, and test cases — ensuring every need is implemented and tested.',
+  mq6:'B is correct. The requirement is not atomic — it combines two separate requirements (fan activation and alarm activation) in one statement. They should be written as separate requirements (FR-003 and FR-005).',
+  mq7:'C is correct. A timing requirement (500 ms) must be verified by measurement — using an oscilloscope to measure the time between the threshold crossing and the fan activation signal.',
+  mq8:'B is correct. "Should Have" requirements are important but not critical for the first release — the system can be delivered without them, but they should be included if possible.',
+  mq9:'B is correct. Without impact analysis, changes to one requirement may break dependent requirements, design components, firmware modules, and test cases — causing integration failures and rework.',
+  mq10:'B is correct. Applicable requirements = 50 − 5 = 45. Coverage = 35/45 × 100 = 77.8%.'
+};
+
+function checkMainQuiz(){
+  var score=0;
+  Object.keys(mainAnswers).forEach(function(q){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    var fb=document.getElementById(q+'-fb');
+    var labels=document.querySelectorAll('#'+q+' label');
+    labels.forEach(function(l){l.className='';});
+    fb.className='quiz-feedback show';
+    if(sel){
+      var correct=mainAnswers[q];
+      labels.forEach(function(l){
+        var v=l.querySelector('input').value;
+        if(v===correct)l.className='correct';
+        else if(v===sel.value&&v!==correct)l.className='wrong';
+      });
+      if(sel.value===correct){score++;fb.style.background='#c8e6c9';fb.style.color='#1b5e20';}
+      else{fb.style.background='#ffcdd2';fb.style.color='#b71c1c';}
+    } else {
+      var correct=mainAnswers[q];
+      labels.forEach(function(l){if(l.querySelector('input').value===correct)l.className='missed';});
+      fb.style.background='#fff9c4';fb.style.color='#f57f17';
+    }
+    fb.textContent=mainExplanations[q];
+  });
+  var sb=document.getElementById('main-score');
+  sb.className='score-box show';
+  sb.innerHTML='Score: '+score+' / 10 &nbsp;|&nbsp; '+score*10+'%<br><small>'+(score>=8?'Excellent!':score>=6?'Good — review incorrect answers.':'Keep practicing — review the relevant sections.')+'</small>';
+}
+
+function resetMainQuiz(){
+  Object.keys(mainAnswers).forEach(function(q){
+    document.querySelectorAll('input[name="'+q+'"]').forEach(function(r){r.checked=false;});
+    var fb=document.getElementById(q+'-fb');
+    fb.className='quiz-feedback';fb.textContent='';
+    document.querySelectorAll('#'+q+' label').forEach(function(l){l.className='';});
+  });
+  var sb=document.getElementById('main-score');
+  sb.className='score-box';sb.innerHTML='';
+}
+</script>
+</body>
+</html>
